@@ -1,0 +1,289 @@
+/* 기본 스타일, 홈페이지 스타일
+환영 메시지, 버튼 스타일 */
+/* 🎨 1. 기본 설정 (2~15줄)
+   body
+
+   역할: 페이지 전체 배경
+   기능:
+
+   음식 이미지 + 보라색 레이어
+   Flexbox로 세로 방향 레이아웃 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%), 
+                url('/images/foods_tour.jpg') center/cover no-repeat fixed;
+    background-color: #667eea;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 컨테이너 */
+/* 📦 2. 컨테이너 (17~27줄)
+   .container
+
+   역할: 환영 카드를 중앙에 배치
+   기능:
+
+   flex: 1 → 남은 공간 모두 차지
+   justify-content: center + align-items: center → 완전 중앙 정렬 */
+.container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    margin-top: 0;
+}
+
+/* 환영 섹션 */
+/* 🎉 3. 환영 섹션 (29~48줄)
+   .welcome-section
+
+   역할: 홈페이지 메인 카드
+   기능:
+
+   반투명 흰색 배경 (rgba(255, 255, 255, 0.95))
+   글라스모피즘 (backdrop-filter: blur(10px))
+   slideUp 애니메이션 (아래에서 위로)
+
+
+
+   .welcome-section h1
+
+   역할: "맛집 투어에 오신 것을 환영합니다!" 제목
+   기능: 매우 큰 글씨(56px), 굵은 글씨
+
+   .welcome-section > p
+
+   역할: 소개 문구
+   기능: 회색, 줄 간격 1.6 */
+.welcome-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 80px 50px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 700px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    animation: slideUp 0.6s ease-out;
+}
+
+.welcome-section h1 {
+    color: #333;
+    font-size: 56px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.welcome-section > p {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 50px;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+/* 인증 버튼 */
+/* 🔘 4. 인증 버튼 (50~98줄)
+   .auth-buttons
+
+   역할: 로그인/회원가입 버튼 영역
+   기능: Flexbox로 가로 배치, 20px 간격
+
+   .btn-primary, .btn-secondary
+
+   역할: 로그인(보라색) / 회원가입(회색) 버튼
+   기능:
+
+   마우스 올리면 위로 올라감 + 그림자 커짐
+   클릭하면 살짝 눌림 */
+.auth-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 40px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    min-width: 160px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 2px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #e8e8e8;
+    border-color: #999;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:active {
+    transform: translateY(-1px);
+}
+
+/* 로그인 상태 섹션 */
+/* 👤 5. 로그인 상태 섹션 (100~114줄)
+   .authenticated-section
+
+   역할: 로그인 후 보이는 영역
+   애니메이션: fadeIn (서서히 나타남)
+
+   .welcome-message
+
+   역할: "홍길동님 환영합니다!" 메시지
+   기능: 보라색, 큰 글씨(20px) */
+.authenticated-section {
+    animation: fadeIn 0.6s ease-in;
+}
+
+.welcome-message {
+    color: #667eea;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+}
+
+.authenticated-section .btn {
+    min-width: 220px;
+    padding: 16px 50px;
+    font-size: 17px;
+}
+
+/* 애니메이션 */
+/* 🎬 6. 애니메이션 (116~136줄)
+   @keyframes slideUp
+
+   역할: 카드가 아래에서 위로 슬라이드
+   효과: 투명 → 불투명, 아래 → 위
+
+   @keyframes fadeIn
+
+   역할: 로그인 메시지가 서서히 나타남
+   효과: 투명 → 불투명, 살짝 아래 → 위 */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 */
+/* 📱 7. 반응형 (138~183줄)
+   태블릿 (768px 이하)
+
+   제목 크기 축소 (56px → 42px)
+   버튼 세로 배치
+   버튼 가로 100%
+
+   모바일 (480px 이하)
+
+   제목 더 축소 (42px → 36px)
+   카드 패딩 축소 (80px → 40px) */
+@media (max-width: 768px) {
+    .welcome-section {
+        padding: 60px 30px;
+        border-radius: 15px;
+    }
+
+    .welcome-section h1 {
+        font-size: 42px;
+        margin-bottom: 15px;
+    }
+
+    .welcome-section > p {
+        font-size: 16px;
+        margin-bottom: 35px;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 12px 32px;
+        font-size: 15px;
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px 15px;
+    }
+
+    .welcome-section {
+        padding: 40px 20px;
+    }
+
+    .welcome-section h1 {
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+
+    .welcome-section > p {
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    .btn {
+        padding: 11px 28px;
+        font-size: 14px;
+    }
+}

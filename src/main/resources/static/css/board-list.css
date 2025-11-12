@@ -1,0 +1,828 @@
+/* 게시글 목록 페이지 스타일 */
+/* 🎨 1. 기본 설정 (1~16줄)
+
+   동일한 음식 배경 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%),
+                url('/images/foods_tour.jpg') center/cover no-repeat fixed;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 헤더 */
+/* 🏷️ 2. 헤더 (18~36줄)
+   .board-header
+
+   역할: 페이지 상단 "커뮤니티 게시판" 타이틀
+   기능: 흰색 글씨, 중앙 정렬
+
+   .board-header h1
+
+   역할: "커뮤니티 게시판" 제목
+   기능: 큰 글씨(42px), 굵은 글씨 */
+.board-header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: white;
+}
+
+.board-header h1 {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -1px;
+}
+
+.board-header p {
+    font-size: 16px;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+/* 검색 섹션 */
+/* 🔍 3. 검색 섹션 (38~103줄)
+   .search-section
+
+   역할: 검색창 영역
+   기능: 흰색 박스, 그림자
+
+   .search-form
+
+   역할: 검색 입력창 + 버튼
+   구조: [검색어 입력] [검색] [초기화]
+
+   .search-input
+
+   역할: 검색어 입력창
+   기능: flex: 1 (남은 공간 모두 차지) */
+.search-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.btn-search,
+.btn-reset {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-search {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-reset {
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-reset:hover {
+    background: #e8e8e8;
+}
+
+/* 메시지 */
+.alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 게시글 액션 */
+/* 📝 5. 게시글 액션 (127~164줄)
+   .board-actions
+
+   역할: "글쓰기" 버튼 영역
+   기능: 좌우 배치 (통계 vs 버튼)
+
+   .login-prompt
+
+   역할: 비로그인 시 "로그인이 필요합니다" 메시지 */
+.board-actions {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.login-prompt {
+    color: #666;
+    font-size: 14px;
+}
+
+.login-prompt a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}
+
+/* 게시글 목록 */
+/* 📋 6. 게시글 테이블 (166~320줄)
+   .board-list
+
+   역할: 게시글 목록 테이블을 감싸는 흰색 박스
+
+   .board-table
+
+   역할: 실제 테이블
+   구조:
+
+     | 번호 | 제목 | 작성자 | 작성일 | 조회수 |
+   ```
+
+   ### 열 너비 설정
+   - `.col-num`: 60px (번호)
+   - `.col-title`: 유동적 (제목)
+   - `.col-author`: 120px (작성자)
+   - `.col-date`: 150px (작성일)
+   - `.col-views`: 80px (조회수)
+
+   ### `.board-table tbody tr:hover`
+   - **기능**: 행에 마우스 올리면 연한 회색 배경
+
+   ### `.view-count`
+   - **역할**: 조회수 배지
+   - **기능**: 보라색 배경, 흰색 글씨, 작은 숫자
+
+   --- */
+.board-list {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.no-content {
+    padding: 60px 20px;
+    text-align: center;
+    color: #999;
+}
+
+.no-content p {
+    font-size: 16px;
+}
+
+.board-table-wrapper {
+    overflow-x: auto;
+}
+
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.board-table thead {
+    background: #f9f9f9;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.board-table th {
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.col-num {
+    width: 60px;
+    text-align: center;
+}
+
+.col-title {
+    flex: 1;
+    min-width: 300px;
+}
+
+.col-author {
+    width: 120px;
+}
+
+.col-date {
+    width: 150px;
+}
+
+.col-views {
+    width: 80px;
+    text-align: center;
+}
+
+.board-table tbody tr {
+    border-bottom: 1px solid #e8e8e8;
+    transition: background-color 0.2s ease;
+}
+
+.board-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.board-table td {
+    padding: 14px 12px;
+    font-size: 14px;
+    color: #333;
+}
+
+.board-table .col-num {
+    text-align: center;
+    color: #999;
+}
+
+.board-table .col-title a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.board-table .col-title a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.board-table .col-author {
+    color: #666;
+    font-size: 13px;
+}
+
+.board-table .col-date {
+    color: #999;
+    font-size: 13px;
+}
+
+.board-table .col-views {
+    text-align: center;
+    background: #f0f8ff;
+    border-radius: 4px;
+}
+
+.view-count {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* 페이징 */
+/* ## 📄 **7. 페이징 (322~358줄)**
+
+   ### `.pagination`
+   - **역할**: 페이지 번호 버튼들
+   - **구조**: [◀ 이전] [1] [2] [3] [다음 ▶]
+
+   ### `.page-btn`
+   - **역할**: 개별 페이지 버튼
+   - **상태**:
+     - `.active`: 현재 페이지 (보라색 배경)
+     - `.disabled`: 비활성화 (반투명)
+     - 호버: 파란 테두리
+
+   ---
+ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(.disabled):not(.active) {
+    border-color: #667eea;
+    color: #667eea;
+    background: #f0f8ff;
+}
+
+.page-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.page-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* 통계 */
+/* ## 📊 **8. 통계 (360~370줄)**
+
+   ### `.board-stats`
+   - **역할**: "총 123개의 게시글" 같은 통계 정보
+   - **기능**: 중앙 정렬, 흰색 글씨
+
+   --- */
+.board-stats {
+    text-align: center;
+    color: white;
+    font-size: 14px;
+}
+
+.board-stats strong {
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: white;
+    font-size: 14px;
+}
+
+footer a {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* ========== 반응형 (개선) ========== */
+
+/* 📱 태블릿 (768px 이하) */
+/* ## 📱 **9. 반응형 - 태블릿 (386~549줄)**
+
+   ### `@media (max-width: 768px)`
+   - **핵심 변화**: 테이블을 카드 형태로 변경!
+
+   #### 테이블 → 카드 변환
+   ```
+   기존: | 번호 | 제목 | 작성자 | 날짜 | 조회 |
+
+   변환 후:
+   ┌─────────────────────┐
+   │ 제목입니다       [#5] │  ← 번호는 우측 상단
+   │ 👤 홍길동 📅 2024-01-01 | 👁️ 123 │
+   └─────────────────────┘ */
+@media (max-width: 768px) {
+    body {
+        padding: 10px 0;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    /* 헤더 */
+    .board-header {
+        margin-bottom: 30px;
+    }
+
+    .board-header h1 {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .board-header p {
+        font-size: 15px;
+    }
+
+    /* 검색 섹션 */
+    .search-section {
+        padding: 16px;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-input {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .btn-search,
+    .btn-reset {
+        width: 100%;
+    }
+
+    /* 게시글 액션 */
+    .board-actions {
+        flex-direction: column;
+        gap: 15px;
+        padding: 16px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* 🎯 테이블을 카드 형태로 변경 */
+    .board-table-wrapper {
+        overflow-x: visible;
+    }
+
+    .board-table {
+        display: block;
+    }
+
+    .board-table thead {
+        display: none; /* 헤더 숨김 */
+    }
+
+    .board-table tbody {
+        display: block;
+    }
+
+    .board-table tbody tr {
+        display: block;
+        margin-bottom: 12px;
+        border: 1px solid #e8e8e8;
+        border-radius: 8px;
+        padding: 14px;
+        background: white;
+        cursor: pointer;
+    }
+
+    .board-table tbody tr:hover {
+        background: #f9f9f9;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .board-table td {
+        display: block;
+        padding: 4px 0;
+        border: none;
+        text-align: left !important;
+    }
+
+    /* 번호는 작게 우측 상단에 */
+    .board-table .col-num {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        background: #f0f0f0;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        color: #666;
+    }
+
+    .board-table tbody tr {
+        position: relative;
+    }
+
+    /* 제목 */
+    .board-table .col-title {
+        min-width: auto;
+        padding-right: 50px; /* 번호 공간 확보 */
+        margin-bottom: 8px;
+    }
+
+    .board-table .col-title a {
+        display: block;
+        padding: 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    /* 작성자, 날짜, 조회수를 한 줄로 */
+    .board-table .col-author,
+    .board-table .col-date,
+    .board-table .col-views {
+        display: inline-block !important;
+        padding: 4px 0 !important;
+        font-size: 12px !important;
+    }
+
+    .board-table .col-author::before {
+        content: '👤 ';
+        color: #999;
+    }
+
+    .board-table .col-date::before {
+        content: ' | 📅 ';
+        color: #999;
+        margin-left: 8px;
+    }
+
+    .board-table .col-views {
+        background: transparent !important;
+        margin-left: 8px;
+    }
+
+    .board-table .col-views::before {
+        content: ' | 👁️ ';
+        color: #999;
+    }
+
+    .view-count {
+        display: inline;
+        background: transparent;
+        color: #667eea;
+        padding: 0;
+        font-size: 12px;
+    }
+
+    /* 페이징 */
+    .pagination {
+        gap: 5px;
+        padding: 0 10px;
+    }
+
+    .page-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    /* 통계 */
+    .board-stats {
+        font-size: 13px;
+        padding: 0 10px;
+    }
+
+    .board-stats strong {
+        font-size: 15px;
+    }
+}
+
+/* 📱 모바일 (480px 이하) */
+/* 📱 10. 반응형 - 모바일 (551~658줄)
+   @media (max-width: 480px)
+
+   카드 간격/패딩 축소
+   글씨 크기 축소
+   페이지 번호 가로 스크롤 가능 */
+@media (max-width: 480px) {
+    .container {
+        padding: 12px;
+    }
+
+    /* 헤더 */
+    .board-header {
+        margin-bottom: 25px;
+    }
+
+    .board-header h1 {
+        font-size: 28px;
+        margin-bottom: 6px;
+    }
+
+    .board-header p {
+        font-size: 14px;
+    }
+
+    /* 검색, 액션 */
+    .search-section,
+    .board-actions {
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* 카드 간격 줄이기 */
+    .board-table tbody tr {
+        margin-bottom: 10px;
+        padding: 12px;
+    }
+
+    .board-table .col-num {
+        top: 12px;
+        right: 12px;
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
+    .board-table .col-title {
+        padding-right: 45px;
+    }
+
+    .board-table .col-title a {
+        font-size: 14px;
+    }
+
+    .board-table .col-author,
+    .board-table .col-date,
+    .board-table .col-views {
+        font-size: 11px !important;
+    }
+
+    .view-count {
+        font-size: 11px;
+    }
+
+    /* 페이징 */
+    .pagination {
+        gap: 4px;
+    }
+
+    .page-btn {
+        padding: 7px 10px;
+        font-size: 11px;
+    }
+
+    /* 페이지 번호가 많을 때 일부만 표시 */
+    .page-numbers {
+        max-width: 100%;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 5px 0;
+    }
+
+    /* 통계 */
+    .board-stats {
+        font-size: 12px;
+    }
+
+    .board-stats strong {
+        font-size: 14px;
+    }
+
+    /* Footer */
+    footer {
+        padding: 25px 15px;
+        font-size: 13px;
+    }
+}
+
+/* 📱 아주 작은 모바일 (360px 이하) */
+@media (max-width: 360px) {
+    .board-header h1 {
+        font-size: 26px;
+    }
+
+    .board-table tbody tr {
+        padding: 10px;
+    }
+
+    .board-table .col-title a {
+        font-size: 13px;
+    }
+
+    .board-table .col-author,
+    .board-table .col-date,
+    .board-table .col-views {
+        font-size: 10px !important;
+    }
+}
+
+/* 🎨 호버 효과 모바일에서 제거 */
+@media (hover: none) {
+    .board-table tbody tr:hover {
+        background: white;
+        box-shadow: none;
+    }
+}
+
+/* 🔄 로딩 애니메이션 (선택사항) */
+/* 🎬 12. 애니메이션 (688~698줄)
+   .board-row { animation: fadeIn }
+
+   역할: 게시글 행이 나타날 때 효과 */
+.board-row {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+/* 파일용도핵심 기능board-detail.css게시글 보기댓글 시스템, 수정/삭제 버튼board-form.css게시글 작성/수정폼 입력,
+    유효성 안내board-list.css게시글 목록테이블 → 카드 반응형, 페이징 */

@@ -1,0 +1,326 @@
+/* 게시글 작성/수정 페이지 스타일 */
+/* 🎨 1. 기본 설정 (1~16줄)
+
+   auth.css와 동일 (음식 배경 + 보라색 레이어) */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%),
+                url('/images/foods_tour.jpg') center/cover no-repeat fixed;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 📦 2. 폼 래퍼 (18~37줄)
+   .form-wrapper
+
+   역할: 작성/수정 폼을 감싸는 흰색 박스
+   기능: 중앙 배치, 둥근 모서리, 그림자
+
+   .form-wrapper h1
+
+   역할: "게시글 작성" 또는 "게시글 수정" 제목 */
+
+.form-wrapper {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.form-wrapper h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* 메시지 */
+/* ⚠️ 3. 메시지 (39~68줄)
+   .alert, .alert-success, .alert-error
+
+   역할: "작성 완료" / "오류 발생" 알림
+   애니메이션: 위에서 아래로 슬라이드 (slideDown) */
+.alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 폼 */
+/* 📝 4. 폼 요소 (70~120줄)
+   .board-form
+
+   역할: 전체 폼
+   기능: 세로 배치, 25px 간격
+
+   .form-group
+
+   역할: 라벨 + 입력창 묶음
+
+   .form-label
+
+   역할: "제목", "내용" 라벨
+   구조: 라벨 텍스트 + 빨간 별표(*)
+
+   .required
+
+   역할: 빨간색 별표 "*" (필수 항목 표시)
+
+   .form-input, .form-textarea
+
+   역할: 제목 입력창 / 내용 입력창
+   기능:
+
+   기본 연한 회색 배경
+   포커스 시 흰색 + 보라색 테두리
+
+
+
+   .form-help
+
+   역할: "최대 500자" 같은 도움말
+   기능: 작은 회색 글씨, 우측 정렬 */
+.board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.required {
+    color: #f44336;
+    font-size: 14px;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.form-textarea {
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-help {
+    font-size: 13px;
+    color: #999;
+    text-align: right;
+}
+
+/* 버튼 */
+/* 🔘 5. 버튼 (122~168줄)
+   .form-actions
+
+   역할: 작성/취소 버튼 영역
+   기능: 중앙 정렬, 가로 배치
+
+   .btn-primary, .btn-secondary
+
+   역할: 작성(보라색) / 취소(회색) 버튼
+   기능: 최소 너비 150px */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    min-width: 150px;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+    border: 1.5px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e8e8e8;
+    border-color: #999;
+    transform: translateY(-3px);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    margin-top: 40px;
+    color: white;
+    font-size: 14px;
+}
+
+footer a {
+    color: #ffd700;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* 반응형 */
+/* 📱 6. 반응형 (181~221줄)
+   태블릿 (768px 이하)
+
+   버튼 세로 배치, 가로 100%
+
+   모바일 (480px 이하)
+
+   폼 패딩 축소
+   글씨 크기 축소 */
+@media (max-width: 768px) {
+    .form-wrapper {
+        padding: 30px 20px;
+        border-radius: 12px;
+    }
+
+    .form-wrapper h1 {
+        font-size: 26px;
+        margin-bottom: 25px;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px 0;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .form-wrapper {
+        padding: 25px 15px;
+    }
+
+    .form-wrapper h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        gap: 6px;
+    }
+
+    .form-label {
+        font-size: 14px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판 관리 - 관리자</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📋 게시판 관리</h1>
+        <a th:href="@{/admin}" class="btn-back">← 대시보드로</a>
+    </div>
+
+    <!-- 성공/에러 메시지 -->
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- 게시글 목록 -->
+    <div class="admin-section">
+        <h2>📋 전체 게시글 목록 (<span th:text="${#lists.size(boards)}">0</span>개)</h2>
+
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                    <th>작성일</th>
+                    <th>수정일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="board : ${boards}">
+                    <td th:text="${board.id}">1</td>
+                    <td>
+                        <a th:href="@{/boards/{id}(id=${board.id})}"
+                           th:text="${board.title}"
+                           target="_blank"
+                           style="max-width: 300px; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            게시글 제목
+                        </a>
+                    </td>
+                    <td th:text="${board.author.username}">작성자</td>
+                    <td th:text="${board.viewCount}">0</td>
+                    <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                    <td>
+                        <span th:if="${board.updatedAt != null}"
+                              th:text="${#temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm')}">
+                            2024-01-01
+                        </span>
+                        <span th:if="${board.updatedAt == null}" style="color: #999;">-</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- 수정 -->
+                            <a th:href="@{/boards/{id}/edit(id=${board.id})}"
+                               class="btn-action btn-primary"
+                               target="_blank">
+                                ✏️ 수정
+                            </a>
+
+                            <!-- 삭제 -->
+                            <form th:action="@{/boards/{id}/delete(id=${board.id})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?\n\n⚠️ 이 게시글의 모든 댓글도 함께 삭제됩니다.');">
+                                <button type="submit" class="btn-action btn-danger">🗑️ 삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(boards)}">
+                    <td colspan="7" style="text-align: center; color: #999; padding: 40px;">
+                        작성된 게시글이 없습니다.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 통계 -->
+    <div class="admin-stats">
+        <div class="stat-item">
+            <span class="stat-label">전체 게시글:</span>
+            <span class="stat-value" th:text="${#lists.size(boards)} + '개'">0개</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">총 조회수:</span>
+            <span class="stat-value" th:text="${#aggregates.sum(boards.![viewCount])} + '회'">0회</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">평균 조회수:</span>
+            <span class="stat-value">
+                <span th:if="${!#lists.isEmpty(boards)}"
+                      th:text="${#numbers.formatDecimal(#aggregates.sum(boards.![viewCount]) / #lists.size(boards), 1, 1)} + '회'">
+                    0회
+                </span>
+                <span th:if="${#lists.isEmpty(boards)}">0회</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 안내 -->
+    <div class="admin-info">
+        <h3>⚠️ 주의사항</h3>
+        <ul>
+            <li>게시글 삭제 시 해당 게시글의 모든 댓글이 함께 삭제됩니다.</li>
+            <li>삭제된 게시글은 복구할 수 없습니다.</li>
+            <li>수정은 새 탭에서 열립니다.</li>
+        </ul>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 맛집 추천 | <a th:href="@{/admin}">관리자 대시보드</a></p>
+</footer>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

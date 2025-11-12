@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${restaurant.id != null ? '맛집 수정' : '맛집 등록'}">맛집 등록</title>
+
+    <!-- ✅ CSRF 토큰 메타 태그 추가 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/restaurant-form.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<!-- 🧭 네비게이션 바 추가 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title" th:text="${restaurant.id != null ? '🍽️ 맛집 수정' : '🍽️ 맛집 등록'}">
+            🍽️ 맛집 등록
+        </h2>
+
+        <!-- 성공/에러 메시지 -->
+        <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- 폼 시작 -->
+        <form th:action="${restaurant.id != null ? '/restaurants/' + restaurant.id + '/edit' : '/restaurants'}"
+              th:object="${restaurant}"
+              method="post"
+              enctype="multipart/form-data">
+
+
+            <input type="hidden" th:if="${restaurant.id != null}" th:field="*{id}">
+
+            <!-- 맛집 이름 -->
+            <div class="mb-3">
+                <label for="name" class="form-label">맛집 이름 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="name" th:field="*{name}"
+                       placeholder="예) 홍콩반점" required>
+            </div>
+
+            <!-- 카테고리 -->
+            <div class="mb-3">
+                <label for="category" class="form-label">카테고리 <span class="text-danger">*</span></label>
+                <select class="form-select" id="category" th:field="*{category}" required>
+                    <option value="">선택하세요</option>
+                    <option value="한식">한식</option>
+                    <option value="중식">중식</option>
+                    <option value="일식">일식</option>
+                    <option value="양식">양식</option>
+                    <option value="분식">분식</option>
+                    <option value="카페">카페</option>
+                    <option value="기타">기타</option>
+                </select>
+            </div>
+
+            <!-- 주소 검색 및 지도 추가 -->
+            <div class="mb-3" style="margin-top: 20px;">
+                <label class="form-label">주소 검색</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="addressSearch"
+                           placeholder="예) 서울시 강남구 테헤란로 152"> <!-- 예시 글 -->
+                    <button class="btn btn-primary" type="button" id="searchBtn">🔍 검색</button>
+                </div>
+                <!-- ✅ 안내 문구 추가 -->
+                <small class="text-muted">💡 도로명 주소나 지번 주소를 상세하게 입력하세요 (예: 서울시 강남구 테헤란로 152)</small>
+            </div>
+
+            <!-- ✅ 이 부분을 추가! -->
+            <div class="mb-3">
+                <label for="address" class="form-label">주소 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="address" th:field="*{address}"
+                       placeholder="위 검색 버튼을 눌러 주소를 확정하세요" required readonly>
+                <small class="text-muted">🔍 위 검색 버튼을 사용해 주소를 입력하세요</small>
+            </div>
+
+            <!-- ✅ 좌표 hidden 필드 추가! -->
+            <input type="hidden" id="latitude" th:field="*{latitude}">
+            <input type="hidden" id="longitude" th:field="*{longitude}">
+
+            <!-- 카카오맵 미리보기 -->
+            <div class="mb-3">
+                <label class="form-label">지도 미리보기</label>
+                <div id="formMap" style="width: 100%; height: 300px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px;"></div>
+                <small class="text-muted">위 검색 버튼을 클릭하면 지도에 위치가 표시됩니다.</small>
+            </div>
+
+            <!-- 전화번호 -->
+            <div class="mb-3">
+                <label for="phone" class="form-label">전화번호</label>
+                <input type="tel" class="form-control" id="phone" th:field="*{phone}"
+                       placeholder="예) 02-1234-5678">
+            </div>
+
+            <!-- 가격 -->
+            <div class="mb-3">
+                <label for="price" class="form-label">평균 가격 (원)</label>
+                <input type="number" class="form-control" id="price" th:field="*{price}"
+                       placeholder="예) 15000" min="0">
+            </div>
+
+            <!-- 별점 -->
+            <div class="mb-3">
+                <label for="rating" class="form-label">별점</label>
+                <select class="form-select" id="rating" th:field="*{rating}">
+                    <option value="">선택하세요</option>
+                    <option value="1">⭐ 1점</option>
+                    <option value="2">⭐⭐ 2점</option>
+                    <option value="3">⭐⭐⭐ 3점</option>
+                    <option value="4">⭐⭐⭐⭐ 4점</option>
+                    <option value="5">⭐⭐⭐⭐⭐ 5점</option>
+                </select>
+            </div>
+
+            <!-- 설명 -->
+            <div class="mb-3">
+                <label for="description" class="form-label">설명</label>
+                <textarea class="form-control" id="description" th:field="*{description}"
+                          rows="4" placeholder="맛집에 대한 설명을 입력하세요"></textarea>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- ========== 기존 이미지 목록 (수정 모드) ========== -->
+            <div class="mb-4" th:if="${restaurant.id != null && restaurant.images != null && !restaurant.images.isEmpty()}">
+                <h5 class="mb-3">📷 등록된 이미지</h5>
+                <div class="image-preview">
+                    <div class="image-preview-item" th:each="image : ${restaurant.images}">
+                        <img th:src="${image.filePath}" th:alt="${image.description}"
+                             onclick="openImageModal(this.src)" style="cursor: pointer;">
+
+                        <span class="badge bg-warning text-dark" th:if="${image.isMainImage}">🌟 대표</span>
+
+                        <!-- ✅ 편집 가능한 textarea -->
+                        <textarea class="form-control form-control-sm mt-2"
+                                  th:name="'existingImageDesc_' + ${image.id}"
+                                  rows="2"
+                                  maxlength="200"
+                                  placeholder="설명 입력"
+                                  th:text="${image.description != null ? image.description : ''}"></textarea>
+
+                        <!-- ✅ 버튼들 - 폼 밖으로 이동 (onclick 사용) -->
+                        <div class="d-flex gap-2 mt-2">
+                            <!-- 대표 이미지 설정 버튼 -->
+                            <button type="button"
+                                    th:if="${!image.isMainImage}"
+                                    class="btn btn-sm btn-warning"
+                                    th:onclick="'setMainImage(' + ${restaurant.id} + ',' + ${image.id} + ')'">
+                                ★ 대표설정
+                            </button>
+
+                            <!-- 삭제 버튼 -->
+                            <button type="button"
+                                    class="btn btn-sm btn-danger"
+                                    th:onclick="'deleteImage(' + ${restaurant.id} + ',' + ${image.id} + ')'">
+                                🗑️ 삭제
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="my-4">
+            </div>
+
+            <!-- ========== 🔥 대표 이미지 업로드 (1개, 필수/선택) ========== -->
+            <div class="mb-4">
+                <label class="form-label">
+                    🌟 대표 이미지
+                    <span th:if="${restaurant.id == null}" class="text-danger">* 필수</span>
+                    <span th:if="${restaurant.id != null}" class="text-muted">(변경할 경우에만 업로드)</span>
+                </label>
+                <small class="d-block text-muted mb-2">
+                    • 맛집을 대표하는 메인 사진 1장
+                </small>
+
+                <div class="file-input-group" onclick="document.getElementById('mainImageInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                         class="bi bi-image mb-2" viewBox="0 0 16 16">
+                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                    </svg>
+                    <p class="mb-0"><strong>대표 이미지 선택</strong></p>
+                    <small class="text-muted">클릭하여 1장 업로드</small>
+                </div>
+
+                <input type="file" id="mainImageInput" name="mainImage"
+                       accept="image/*"
+                       onchange="handleMainImageSelect(event)"
+                       th:required="${restaurant.id == null}"
+                       style="display: none;">
+
+                <div id="mainImagePreview" class="mt-3"></div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- ========== 🔥 추가 이미지 업로드 (여러 개, 선택) ========== -->
+            <div class="mb-4">
+                <label class="form-label">
+                    📸 추가 이미지 (선택)
+                </label>
+                <small class="d-block text-muted mb-2">
+                    • 메뉴, 인테리어 등 추가 사진들
+                    • 각 이미지마다 설명을 입력할 수 있습니다
+                </small>
+
+                <div class="file-input-group" onclick="document.getElementById('additionalImagesInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                         class="bi bi-images mb-2" viewBox="0 0 16 16">
+                        <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l3.777 1.947V5a1 1 0 0 0-1-1h-12z"/>
+                    </svg>
+                    <p class="mb-0"><strong>추가 이미지 선택</strong></p>
+                    <small class="text-muted">클릭하여 여러 장 업로드</small>
+                </div>
+
+                <input type="file" id="additionalImagesInput" name="additionalImages"
+                       multiple accept="image/*"
+                       onchange="handleAdditionalImagesSelect(event)"
+                       style="display: none;">
+
+                <div id="additionalImagesPreview" class="mt-3"></div>
+            </div>
+
+            <!-- ✅ 버튼 영역 - 여기가 중요! -->
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary flex-grow-1"
+                        th:text="${restaurant.id != null ? '✔ 수정하기' : '✔ 등록하기'}">
+                    ✔ 등록하기
+                </button>
+                <a th:href="@{/restaurants}" class="btn btn-secondary">취소</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 이미지 확대 모달 -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close-modal" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" class="modal-content-img" src="" alt="확대 이미지"
+         onclick="event.stopPropagation()">
+</div>
+
+<!-- 카카오맵 API -->
+<!-- ✅ 수정된 코드 -->
+<script type="text/javascript"
+        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=92654744e8b63343da4840862a58279c&libraries=services&autoload=false"
+        charset="utf-8">
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    console.log('✅ JavaScript 로딩 완료');
+
+    // ========== 대표 이미지 처리 ==========
+    function handleMainImageSelect(event) {
+        console.log('대표 이미지 선택됨');
+        const file = event.target.files[0];
+        const preview = document.getElementById('mainImagePreview');
+
+        preview.innerHTML = '';
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `
+                    <div class="image-preview">
+                        <div class="image-preview-item">
+                            <img src="${e.target.result}" alt="대표 이미지">
+                            <span class="badge bg-warning text-dark">🌟 대표</span>
+                            <div class="mt-2">
+                                <input type="text" name="mainImageDesc" class="form-control form-control-sm"
+                                       placeholder="대표 이미지 설명 (선택)" maxlength="200">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // ========== 추가 이미지 처리 ==========
+    function handleAdditionalImagesSelect(event) {
+        console.log('추가 이미지 선택됨');
+        const files = event.target.files;
+        const preview = document.getElementById('additionalImagesPreview');
+
+        preview.innerHTML = '';
+
+        if (files.length === 0) return;
+
+        const container = document.createElement('div');
+        container.className = 'image-preview';
+
+        Array.from(files).forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const item = document.createElement('div');
+                item.className = 'image-preview-item';
+                item.innerHTML = `
+                    <img src="${e.target.result}" alt="추가 이미지 ${index + 1}">
+                    <div class="menu-name">추가 이미지 ${index + 1}</div>
+                    <div class="mt-2">
+                        <input type="text" name="additionalImageDescs" class="form-control form-control-sm"
+                               placeholder="이미지 설명 (예: 짬뽕, 짜장면)" maxlength="200">
+                    </div>
+                `;
+                container.appendChild(item);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        preview.appendChild(container);
+    }
+
+    // ========== 이미지 모달 ==========
+    function openImageModal(src) {
+        console.log('모달 열기:', src);
+        document.getElementById('imageModal').style.display = 'flex';
+        document.getElementById('modalImage').src = src;
+    }
+
+    function closeImageModal() {
+        console.log('모달 닫기');
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    // ESC 키로 모달 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+        }
+    });
+
+    // ========== ✅ 페이지 로드 확인 ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ 페이지 로드 완료');
+
+        const form = document.querySelector('form');
+        console.log('폼 발견:', form ? '있음' : '없음');
+
+        if (form) {
+            console.log('폼 액션:', form.action);
+            console.log('폼 메서드:', form.method);
+
+            // ✅ 폼 제출 이벤트 리스너
+            form.addEventListener('submit', function(e) {
+             // 🔥 로그아웃 폼이면 그냥 통과
+                if (this.action.includes('/logout')) {
+                    console.log('✅ 로그아웃 폼 - 검증 생략');
+                    return true;
+                }
+
+                console.log('🚀 폼 제출 시작!');
+                console.log('폼 액션:', this.action);
+                console.log('폼 메서드:', this.method);
+
+                // 신규 등록 시 대표 이미지 필수 체크
+                const isNewForm = !document.querySelector('input[name="id"]');
+                const mainImage = document.getElementById('mainImageInput').files[0];
+
+                if (isNewForm && !mainImage) {
+                    console.log('❌ 대표 이미지 없음');
+                    alert('대표 이미지는 필수입니다!');
+                    e.preventDefault();
+                    return false;
+                }
+
+                console.log('✅ 폼 제출 허용');
+                return true;
+            });
+        }
+    });
+    // ========== 대표 이미지 설정 ==========
+function setMainImage(restaurantId, imageId) {
+    if (!confirm('이 이미지를 대표 이미지로 설정하시겠습니까?')) {
+        return;
+    }
+
+    console.log('대표 이미지 설정:', restaurantId, imageId);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/restaurants/${restaurantId}/images/${imageId}/setMain`;
+
+// ✅ CSRF 토큰 추가
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_csrf';
+    csrfInput.value = csrfToken;
+    form.appendChild(csrfInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// ========== 이미지 삭제 ==========
+function deleteImage(restaurantId, imageId) {
+    if (!confirm('이 이미지를 삭제하시겠습니까?')) {
+        return;
+    }
+
+    console.log('이미지 삭제:', restaurantId, imageId);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/restaurants/${restaurantId}/images/${imageId}/delete`;
+
+    // ✅ CSRF 토큰 추가
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = '_csrf';
+    csrfInput.value = csrfToken;
+    form.appendChild(csrfInput);
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+<!-- ✅ 여기에 카카오맵 코드 추가! -->
+<script>
+    console.log('🗺️ 카카오맵 스크립트 시작');
+
+    let formMap = null;
+    let mapMarker = null;
+    let mapInfoWindow = null;
+
+    // ========== 카카오맵 초기화 (수정됨) ==========
+    function initializeFormMap() {
+        const mapContainer = document.getElementById('formMap');
+        if (!mapContainer) {
+            console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
+            return;
+        }
+
+        kakao.maps.load(() => {
+            console.log('✅ kakao.maps.load() 완료');
+
+            // ✅ 기존 좌표 확인
+            const existingLat = document.getElementById('latitude').value;
+            const existingLng = document.getElementById('longitude').value;
+            const existingAddress = document.getElementById('address').value;
+
+            // 기존 좌표가 있으면 해당 위치로, 없으면 강남역
+            let initialLat = existingLat ? parseFloat(existingLat) : 37.4979;
+            let initialLng = existingLng ? parseFloat(existingLng) : 127.0276;
+
+            console.log('📍 초기 위치:', initialLat, initialLng);
+
+            const mapOptions = {
+                center: new kakao.maps.LatLng(initialLat, initialLng),
+                level: 3
+            };
+
+            formMap = new kakao.maps.Map(mapContainer, mapOptions);
+            console.log('✅ 폼 지도 초기화 완료');
+
+            // ✅ 기존 주소가 있으면 마커 표시
+            if (existingAddress && existingAddress.trim() && existingLat && existingLng) {
+                console.log('📍 기존 주소 표시:', existingAddress);
+
+                const coords = new kakao.maps.LatLng(initialLat, initialLng);
+
+                // 마커 생성
+                mapMarker = new kakao.maps.Marker({
+                    map: formMap,
+                    position: coords,
+                    title: existingAddress
+                });
+
+                // 인포윈도우 생성
+                mapInfoWindow = new kakao.maps.InfoWindow({
+                    content: '<div style="padding:10px; font-size:13px;"><strong>' + existingAddress + '</strong></div>',
+                    removable: true
+                });
+
+                mapInfoWindow.open(formMap, mapMarker);
+                console.log('✅ 기존 위치 마커 표시 완료');
+            }
+        });
+    }
+
+    // ========== 주소/키워드 검색 ==========
+    function searchAddressOnMap(addressParam = null) {
+        const query = (addressParam || document.getElementById('addressSearch').value).trim();
+
+        if (!query) {
+            alert('검색어를 입력해주세요.');
+            return;
+        }
+
+        console.log('🔍 검색 시작:', query);
+        if (addressParam) {
+            document.getElementById('addressSearch').value = query;
+        }
+
+        const geocoder = new kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(query, function(addressResult, addressStatus) {
+            if (addressStatus === kakao.maps.services.Status.OK) {
+                console.log('✅ 주소 검색 성공');
+                displaySearchResult(addressResult[0], query);
+            } else {
+                console.log('⏳ 키워드 검색 시도...');
+                searchByKeyword(query);
+            }
+        });
+    }
+
+    function searchByKeyword(keyword) {
+        const places = new kakao.maps.services.Places();
+
+        places.keywordSearch(keyword, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                if (result.length === 0) {
+                    alert('❌ 검색 결과가 없습니다.');
+                    return;
+                }
+                if (result.length === 1) {
+                    console.log('✅ 키워드 검색 성공 (1개)');
+                    displaySearchResult(result[0], result[0].address_name);
+                    return;
+                }
+                console.log(`✅ 키워드 검색 성공 (${result.length}개)`);
+                showSearchResultModal(result);
+            } else {
+                alert('❌ 검색 결과가 없습니다.\n정확한 주소나 장소명을 입력해주세요.');
+            }
+        });
+    }
+
+    function displaySearchResult(place, displayAddress) {
+        const coords = new kakao.maps.LatLng(place.y, place.x);
+        const address = place.address_name || displayAddress;
+
+        // ✅ 주소 입력
+    const addressField = document.getElementById('address');
+    if (addressField) {
+        addressField.value = address;
+    }
+
+    // ✅ 좌표 입력 (없으면 생성)
+    let latField = document.getElementById('latitude');
+    let lngField = document.getElementById('longitude');
+
+    if (!latField) {
+        console.warn('⚠️ latitude 필드 없음 - 생성');
+        latField = document.createElement('input');
+        latField.type = 'hidden';
+        latField.id = 'latitude';
+        latField.name = 'latitude';
+        document.querySelector('form').appendChild(latField);
+    }
+
+    if (!lngField) {
+        console.warn('⚠️ longitude 필드 없음 - 생성');
+        lngField = document.createElement('input');
+        lngField.type = 'hidden';
+        lngField.id = 'longitude';
+        lngField.name = 'longitude';
+        document.querySelector('form').appendChild(lngField);
+    }
+
+    latField.value = place.y;
+    lngField.value = place.x;
+
+        console.log('✅ 주소 저장:', address);
+        console.log('✅ 위도:', place.y);
+        console.log('✅ 경도:', place.x);
+
+        // ✅ 즉시 확인
+        console.log('🔍 확인:', {
+        lat: document.getElementById('latitude')?.value,
+        lng: document.getElementById('longitude')?.value
+    });
+
+        formMap.setCenter(coords);
+
+        if (mapMarker) mapMarker.setMap(null);
+
+        mapMarker = new kakao.maps.Marker({
+            map: formMap,
+            position: coords,
+            title: address
+        });
+
+        if (mapInfoWindow) mapInfoWindow.close();
+
+        const placeName = place.place_name || '';
+        const content = placeName
+            ? `<div style="padding:10px; font-size:13px;"><strong>${placeName}</strong><br/>${address}</div>`
+            : `<div style="padding:10px; font-size:13px;"><strong>${address}</strong></div>`;
+
+        mapInfoWindow = new kakao.maps.InfoWindow({
+            content: content,
+            removable: true
+        });
+
+        mapInfoWindow.open(formMap, mapMarker);
+        alert('✅ 주소가 확정되었습니다!\n' + address);
+    }
+
+    function showSearchResultModal(results) {
+        const existingModal = document.getElementById('searchResultModal');
+        if (existingModal) existingModal.remove();
+
+        const modal = document.createElement('div');
+        modal.id = 'searchResultModal';
+        modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;`;
+
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `background: white; padding: 30px; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);`;
+
+        let html = `<h4 style="margin-bottom: 20px;">🔍 검색 결과 (${results.length}개)</h4><p style="margin-bottom: 20px; font-size: 14px;">원하는 장소를 선택해주세요</p><div style="display: flex; flex-direction: column; gap: 12px;">`;
+
+        results.forEach((place, index) => {
+            html += `<div onclick="selectPlace(${index})" style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; background: #f9f9f9;" onmouseover="this.style.background='#e8f5e9';" onmouseout="this.style.background='#f9f9f9';"><div style="font-weight: bold; margin-bottom: 5px;">${place.place_name}</div><div style="font-size: 13px; color: #666;">📍 ${place.address_name}</div></div>`;
+        });
+
+        html += `</div><button onclick="closeSearchResultModal()" style="margin-top: 20px; padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 6px; cursor: pointer; width: 100%;">취소</button>`;
+
+        modalContent.innerHTML = html;
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        window.searchResults = results;
+    }
+
+    function selectPlace(index) {
+        displaySearchResult(window.searchResults[index], window.searchResults[index].address_name);
+        closeSearchResultModal();
+    }
+
+    function closeSearchResultModal() {
+        const modal = document.getElementById('searchResultModal');
+        if (modal) modal.remove();
+        window.searchResults = null;
+    }
+
+    // ========== 초기화 ==========
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 맛집 폼 초기화 시작');
+        let retryCount = 0;
+
+        function checkKakaoLoaded() {
+            if (typeof kakao !== 'undefined' && kakao.maps) {
+                console.log('✅ 카카오맵 API 로드 완료');
+                initializeFormMap();
+                setupEventListeners();
+            } else if (retryCount++ < 50) {
+                setTimeout(checkKakaoLoaded, 200);
+            } else {
+                console.error('❌ 카카오맵 로드 실패');
+            }
+        }
+        checkKakaoLoaded();
+    });
+
+    function setupEventListeners() {
+        const searchBtn = document.getElementById('searchBtn');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                searchAddressOnMap();
+            });
+        }
+
+        const addressSearch = document.getElementById('addressSearch');
+        if (addressSearch) {
+            addressSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchAddressOnMap();
+                }
+            });
+        }
+        console.log('✅ 이벤트 리스너 등록 완료');
+    }
+</script>
+<!-- 🆕 좌표 자동 저장 및 검증 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🔧 좌표 자동 저장 기능 활성화');
+
+        const form = document.querySelector('form');
+
+        if (!form) {
+            console.error('❌ 폼을 찾을 수 없습니다');
+            return;
+        }
+
+        // 폼 제출 전 좌표 확인
+        form.addEventListener('submit', function(e) {
+            const address = document.getElementById('address').value.trim();
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+
+            console.log('📤 폼 제출 시도');
+            console.log('  주소:', address);
+            console.log('  위도:', latitude);
+            console.log('  경도:', longitude);
+
+            // 주소는 있는데 좌표가 없으면 경고
+            if (address && (!latitude || !longitude)) {
+                console.warn('⚠️ 주소는 있지만 좌표가 없습니다.');
+
+                // 수정 모드면 경고만, 신규 등록이면 차단
+                const isEditMode = document.querySelector('input[name="id"]');
+
+                if (!isEditMode) {
+                    alert('⚠️ 주소 검색 버튼(🔍)을 눌러서 위치를 확정해주세요!');
+                    e.preventDefault();
+                    return false;
+                } else {
+                    console.log('ℹ️ 수정 모드 - 좌표 없어도 허용');
+                }
+            }
+
+            console.log('✅ 폼 제출 허용');
+            return true;
+        });
+
+        console.log('✅ 좌표 검증 리스너 등록 완료');
+    });
+</script>
+</body>
+</html>

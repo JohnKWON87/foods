@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 대시보드 - 맛집 추천</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>📊 관리자 대시보드</h1>
+        <p>시스템 전체 현황을 확인하고 관리할 수 있습니다.</p>
+    </div>
+
+    <!-- 통계 카드 -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <div class="stat-label">전체 회원</div>
+                <div class="stat-value" th:text="${totalUsers} + '명'">0명</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🍽️</div>
+            <div class="stat-info">
+                <div class="stat-label">전체 맛집</div>
+                <div class="stat-value" th:text="${totalRestaurants} + '개'">0개</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+                <div class="stat-label">전체 게시글</div>
+                <div class="stat-value" th:text="${totalBoards} + '개'">0개</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 관리 메뉴 -->
+    <div class="admin-menu">
+        <a th:href="@{/admin/users}" class="menu-card">
+            <div class="menu-icon">👥</div>
+            <div class="menu-title">회원 관리</div>
+            <div class="menu-desc">회원 조회, 삭제, 권한 변경</div>
+        </a>
+
+        <a th:href="@{/admin/restaurants}" class="menu-card">
+            <div class="menu-icon">🍽️</div>
+            <div class="menu-title">맛집 관리</div>
+            <div class="menu-desc">맛집 조회, 삭제</div>
+        </a>
+
+        <a th:href="@{/admin/boards}" class="menu-card">
+            <div class="menu-icon">📋</div>
+            <div class="menu-title">게시판 관리</div>
+            <div class="menu-desc">게시글 조회, 삭제</div>
+        </a>
+    </div>
+
+    <!-- 최근 가입 회원 -->
+    <div class="admin-section">
+        <h2>📌 최근 가입 회원</h2>
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>아이디</th>
+                    <th>이메일</th>
+                    <th>권한</th>
+                    <th>가입일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${recentUsers}">
+                    <td th:text="${user.username}">user123</td>
+                    <td th:text="${user.email}">user@example.com</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${user.role == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}"
+                              th:text="${user.role == 'ROLE_ADMIN' ? '관리자' : '일반'}">
+                            일반
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentUsers)}">
+                    <td colspan="4" style="text-align: center; color: #999;">가입한 회원이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 최근 등록 맛집 -->
+    <div class="admin-section">
+        <h2>🍽️ 최근 등록 맛집</h2>
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>맛집명</th>
+                    <th>카테고리</th>
+                    <th>작성자</th>
+                    <th>등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="restaurant : ${recentRestaurants}">
+                    <td>
+                        <a th:href="@{/restaurants/{id}(id=${restaurant.id})}"
+                           th:text="${restaurant.name}">맛집이름</a>
+                    </td>
+                    <td th:text="${restaurant.category}">한식</td>
+                    <td th:text="${restaurant.author != null ? restaurant.author.username : '-'}">작성자</td>
+                    <td th:text="${#temporals.format(restaurant.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentRestaurants)}">
+                    <td colspan="4" style="text-align: center; color: #999;">등록된 맛집이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 최근 게시글 -->
+    <div class="admin-section">
+        <h2>📋 최근 게시글</h2>
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>제목</th>
+                    <th>작성자</th>
+                    <th>조회수</th>
+                    <th>작성일</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="board : ${recentBoards}">
+                    <td>
+                        <a th:href="@{/boards/{id}(id=${board.id})}"
+                           th:text="${board.title}">게시글 제목</a>
+                    </td>
+                    <td th:text="${board.author.username}">작성자</td>
+                    <td th:text="${board.viewCount}">0</td>
+                    <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(recentBoards)}">
+                    <td colspan="4" style="text-align: center; color: #999;">작성된 게시글이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 맛집 추천 | <a th:href="@{/admin}">관리자 대시보드</a></p>
+</footer>
+</body>
+</html>

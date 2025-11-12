@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 북마크 - Foods</title>
+
+    <!-- 🔥 CSRF 토큰 메타태그 추가 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <link rel="stylesheet" th:href="@{/css/bookmark-list.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="page-header">
+        <h1>내 북마크</h1>
+        <p class="bookmark-count">총 <span th:text="${totalCount}">0</span>개의 맛집</p>
+    </div>
+
+    <!-- 북마크가 없을 때 -->
+    <div th:if="${#lists.isEmpty(bookmarks)}" class="empty-state">
+        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        <h2>북마크한 맛집이 없습니다</h2>
+        <p>마음에 드는 맛집을 북마크해보세요!</p>
+        <a th:href="@{/restaurants}" class="btn-primary">맛집 둘러보기</a>
+    </div>
+
+    <!-- 북마크 목록 -->
+    <div th:if="${!#lists.isEmpty(bookmarks)}" class="bookmark-grid">
+        <div th:each="bookmark : ${bookmarks}" class="bookmark-card">
+            <a th:href="@{/restaurants/{id}(id=${bookmark.restaurant.id})}" class="card-link">
+                <!-- 이미지 -->
+                <div class="card-image">
+                    <!-- ✅ imageUrl → filePath로 수정 -->
+                    <img th:if="${bookmark.restaurant.mainImagePath != null && !#strings.isEmpty(bookmark.restaurant.mainImagePath)}"
+                         th:src="${bookmark.restaurant.mainImagePath}"
+                         th:alt="${bookmark.restaurant.name}"
+                         onerror="this.src='/images/no-image.jpg'">
+
+                    <!-- 이미지가 없을 때 기본 이미지 -->
+                    <img th:if="${bookmark.restaurant.mainImagePath == null || #strings.isEmpty(bookmark.restaurant.mainImagePath)}"
+                         src="/images/no-image.jpg"
+                         alt="기본 이미지">
+                </div>
+
+                <!-- 정보 -->
+                <div class="card-content">
+                    <h3 class="restaurant-name" th:text="${bookmark.restaurant.name}">맛집 이름</h3>
+
+                    <!-- 카테고리 & 별점 -->
+                    <div class="restaurant-meta">
+                        <span class="category" th:text="${bookmark.restaurant.category}">한식</span>
+                        <span class="rating">
+                            <th:block th:with="stars=${bookmark.restaurant.rating != null ? bookmark.restaurant.rating : 0}">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                      th:text="${i <= stars ? '⭐' : '☆'}">⭐</span>
+                            </th:block>
+                        </span>
+                    </div>
+
+                    <p class="restaurant-address" th:text="${bookmark.restaurant.address}">주소</p>
+                    <p class="restaurant-description"
+                       th:text="${#strings.length(bookmark.restaurant.description) > 80
+                                ? #strings.substring(bookmark.restaurant.description, 0, 80) + '...'
+                                : bookmark.restaurant.description}">설명</p>
+
+                    <p class="bookmark-date">
+                        📅 <span th:text="${#temporals.format(bookmark.createdAt, 'yyyy.MM.dd HH:mm')}">2024.01.01</span>
+                    </p>
+                </div>
+            </a>
+
+            <!-- 북마크 제거 버튼 -->
+            <button class="btn-bookmark active"
+                    th:data-restaurant-id="${bookmark.restaurant.id}"
+                    onclick="event.preventDefault(); event.stopPropagation();"
+                    title="북마크 제거">
+                <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/bookmark-list.js}"></script>
+</body>
+</html>

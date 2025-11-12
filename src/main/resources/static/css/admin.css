@@ -1,0 +1,629 @@
+/* ========== 관리자 페이지 전용 스타일 ========== */
+/* 📦 1. 기본 레이아웃 (1~43줄)
+   .admin-container
+
+   역할: 관리자 페이지 전체를 감싸는 컨테이너
+   기능: 최대 너비 1400px, 화면 중앙에 배치, 상단 여백 100px
+
+   .admin-header
+
+   역할: 페이지 상단 헤더 영역
+   기능: 제목과 "돌아가기" 버튼을 양 끝에 배치 (flexbox 사용)
+   디자인: 하단에 보라색 선(border) 추가
+
+   .btn-back
+
+   역할: "돌아가기" 버튼
+   기능: 회색 배경, 마우스 올리면 색상 진해지고 살짝 위로 올라감 */
+/* 기본 레이아웃 */
+.admin-container {
+    max-width: 1400px;
+    margin: 100px auto 50px;
+    padding: 0 20px;
+}
+
+/* 헤더 */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #667eea;
+}
+
+.admin-header h1 {
+    font-size: 32px;
+    color: #333;
+    margin: 0;
+}
+
+.btn-back {
+    padding: 10px 20px;
+    background: #757575;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-back:hover {
+    background: #616161;
+    transform: translateY(-2px);
+}
+
+/* ========== 통계 카드 ========== */
+/* 📊 2. 통계 카드 (45~82줄)
+.stats-grid
+
+역할: 통계 카드들을 격자로 배치하는 컨테이너
+기능: 화면 크기에 따라 자동으로 카드 개수 조정
+
+.stat-card
+
+역할: 개별 통계 카드 (예: "총 회원 수", "총 맛집 수")
+기능: 보라색 그라데이션 배경, 마우스 올리면 위로 살짝 떠오름
+구조: 아이콘 + 텍스트 정보를 가로로 배치
+
+.stat-icon, .stat-info, .stat-label, .stat-value
+
+역할: 통계 카드 내부의 세부 요소들
+기능: 아이콘(📊), 라벨("총 회원"), 숫자 값(123명) 등을 스타일링 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.stat-icon {
+    font-size: 48px;
+    opacity: 0.9;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+/* ========== 관리 메뉴 ========== */
+/* 🎯 3. 관리 메뉴 (84~119줄)
+   .admin-menu
+
+   역할: 관리 메뉴 카드들의 격자 레이아웃
+
+   .menu-card
+
+   역할: 개별 메뉴 카드 (예: "회원관리", "맛집관리")
+   기능: 흰색 배경, 마우스 올리면 보라색 테두리 + 위로 떠오름
+   용도: 링크 역할 (클릭하면 해당 관리 페이지로 이동)
+
+   .menu-icon, .menu-title, .menu-desc
+
+   역할: 메뉴 카드 내부 요소들
+   구조: 아이콘 → 제목 → 설명 순서로 세로 배치 */
+.admin-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.menu-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: #333;
+    border: 2px solid #f0f0f0;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.menu-card:hover {
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.menu-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.menu-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.menu-desc {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ========== 검색 섹션 ========== */
+/* 🔍 4. 검색 섹션 (121~187줄)
+   .search-section
+
+   역할: 검색 영역 전체를 감싸는 컨테이너
+   기능: 연한 회색 배경으로 구분
+
+   .search-form
+
+   역할: 검색 입력창과 버튼들을 가로로 배치
+
+   .search-input
+
+   역할: 검색어 입력창
+   기능: 포커스 시 보라색 테두리로 변경
+
+   .btn-search, .btn-reset
+
+   역할: 검색 버튼, 초기화 버튼
+   기능: 보라색 그라데이션(검색) / 회색(초기화)
+
+   .search-result
+
+   역할: 검색 결과 메시지 표시 영역 (예: "5개의 결과가 있습니다") */
+.search-section {
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-search {
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-reset {
+    padding: 12px 20px;
+    background: #757575;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-reset:hover {
+    background: #616161;
+}
+
+.search-result {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* ========== 섹션 ========== */
+/* 📋 5. 섹션 & 테이블 (189~257줄)
+   .admin-section
+
+   역할: 콘텐츠 섹션을 감싸는 박스
+   기능: 흰색 배경, 둥근 모서리, 약간의 그림자
+
+   .admin-table
+
+   역할: 데이터 테이블 (회원 목록, 맛집 목록 등)
+   기능:
+
+   헤더(thead)는 회색 배경
+   행(tr)에 마우스 올리면 연한 회색으로 변경
+   링크는 보라색 */
+.admin-section {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.admin-section h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* ========== 테이블 ========== */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table thead {
+    background: #f8f9fa;
+}
+
+.admin-table th {
+    padding: 15px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.admin-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-table tbody tr {
+    transition: background 0.2s;
+}
+
+.admin-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.admin-table a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.admin-table a:hover {
+    text-decoration: underline;
+}
+
+/* ========== 뱃지 ========== */
+/* 🏷️ 6. 뱃지 (259~274줄)
+   .badge
+
+   역할: 작은 태그/라벨 (예: "관리자", "일반회원")
+   기능: 둥근 배경에 작은 글씨
+
+   .badge-admin, .badge-user
+
+   역할: 관리자는 빨간색, 일반 유저는 회색으로 구분 */
+.badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-admin {
+    background: #ff6b6b;
+    color: white;
+}
+
+.badge-user {
+    background: #e0e0e0;
+    color: #666;
+}
+
+/* ========== 액션 버튼 ========== */
+/* 🔘 7. 액션 버튼 (276~319줄)
+   .action-buttons
+
+   역할: 여러 버튼을 한 줄에 배치
+
+   .btn-action
+
+   역할: 기본 액션 버튼 스타일
+   기능: 마우스 올리면 살짝 위로 올라감
+
+   .btn-primary, .btn-warning, .btn-danger
+
+   역할: 버튼 색상 구분
+
+   primary: 보라색 (수정 버튼)
+   warning: 노란색 (경고 버튼)
+   danger: 빨간색 (삭제 버튼) */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: #667eea;
+    color: #fff !important;  /* 글씨 강제 흰색 맛집관리 수정 글씨 강조 */
+    font-weight: 700;    /* 글씨 굵게 */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* 약간의 음영 */
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #333;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+.btn-danger {
+    background: #f44336;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #da190b;
+}
+
+/* ========== 통계 영역 ========== */
+/* 📈 8. 통계 영역 (321~350줄)
+   .admin-stats
+
+   역할: 통계 정보를 격자로 배치
+
+   .stat-item
+
+   역할: 개별 통계 항목
+   구조: 라벨(왼쪽) + 숫자(오른쪽) */
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-item .stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* ========== 안내 영역 ========== */
+/* ℹ️ 9. 안내 영역 (352~373줄)
+   .admin-info
+
+   역할: 주의사항이나 안내 메시지 박스
+   기능: 노란색 배경 + 왼쪽에 굵은 노란색 선 */
+.admin-info {
+    background: #fff3cd;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #ffc107;
+    margin-top: 30px;
+}
+
+.admin-info h3 {
+    font-size: 18px;
+    color: #856404;
+    margin-bottom: 15px;
+}
+
+.admin-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.admin-info li {
+    color: #856404;
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+/* ========== 알림 메시지 ========== */
+/* ⚠️ 10. 알림 메시지 (375~392줄)
+   .alert
+
+   역할: 성공/실패 메시지 표시
+
+   .alert-success, .alert-error
+
+   역할: 성공은 초록색, 에러는 빨간색 배경 */
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ========== 반응형 ========== */
+/* 📱 11. 반응형 (394~442줄)
+   @media (max-width: 768px)
+
+   역할: 화면 폭이 768px 이하일 때 (모바일)
+   기능:
+
+   격자를 1열로 변경
+   버튼들을 세로로 배치
+   폰트 크기 축소 */
+@media (max-width: 768px) {
+    .admin-container {
+        margin-top: 80px;
+        padding: 0 15px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 24px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-menu {
+        grid-template-columns: 1fr;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-input,
+    .btn-search,
+    .btn-reset {
+        width: 100%;
+    }
+
+    .admin-table {
+        font-size: 12px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px 5px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-action {
+        width: 100%;
+    }
+}
+
+/* ========== Footer ========== */
+/* 🦶 12. Footer (444~458줄)
+   footer
+
+   역할: 페이지 하단 푸터
+   기능: 중앙 정렬, 상단에 선 추가 */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    margin-top: 50px;
+    border-top: 1px solid #e0e0e0;
+}
+
+footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+/* 💡 핵심 패턴 요약
+
+   Flexbox & Grid: 요소 배치에 주로 사용
+   Hover 효과: transform: translateY(-2px) → 마우스 올리면 위로 살짝 올라감
+   Transition: 모든 변화가 부드럽게 (0.3초)
+   그라데이션: linear-gradient(135deg, #667eea 0%, #764ba2 100%) → 보라색 계열
+   반응형: 모바일에서는 1열 배치로 자동 전환 */

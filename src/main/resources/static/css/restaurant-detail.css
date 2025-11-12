@@ -1,0 +1,1080 @@
+/* ========== 기본 설정 ========== */
+/* 🍽️ restaurant-detail.css (맛집 상세 페이지)
+   🎨 1. 기본 설정 (1~18줄)
+   *, h1~h6, body
+
+   역할: 전체 초기화 + 폰트 설정
+   기능:
+
+   제목은 "Playfair Display" (우아한 세리프체)
+   본문은 "Times New Roman" (클래식한 느낌)
+
+
+
+   .all
+
+   역할: 전체 컨텐츠 컨테이너
+   기능: 최대 너비 1000px, 중앙 정렬 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Playfair Display", serif;
+}
+
+body {
+    font-family: "Times New Roman", Georgia, Serif;
+}
+
+.all {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* ========== HEADER & NAVBAR ========== */
+/* 🧭 2. 상단 네비게이션 (20~50줄)
+   nav
+
+   역할: 고정 상단 메뉴바
+   기능:
+
+   position: fixed → 스크롤해도 상단 고정
+   흰색 배경, 그림자
+
+
+
+   .wings
+
+   역할: 네비 내부 컨테이너
+   기능: 최대 너비 1000px
+
+   .wings a
+
+   역할: 메뉴 링크
+   기능:
+
+   float: left → 왼쪽 정렬
+   마우스 올리면 회색 배경
+
+
+
+   .right
+
+   역할: 오른쪽 정렬 메뉴
+   기능: float: right */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.wings {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.wings a {
+    float: left;
+    text-decoration: none;
+    color: black;
+    letter-spacing: 5px;
+    margin: 15px;
+    padding: 5px;
+    transition: background-color 0.3s;
+}
+
+.wings a:hover {
+    background-color: lightgray;
+}
+
+.right {
+    float: right;
+}
+
+/* ========== BIG PICTURE (헤더 이미지) ========== */
+/* 🖼️ 3. 대표 이미지 (52~76줄)
+   .bigPicture
+
+   역할: 페이지 상단 큰 배경 이미지 영역
+   기능: 상단 여백 60px (네비바 공간)
+
+   .bigPicture img
+
+   역할: 맛집 대표 사진
+   기능:
+
+   고정 높이 500px
+   object-fit: cover → 비율 유지하며 채움
+   opacity: 0.9 → 살짝 투명
+
+
+
+   .theEnd
+
+   역할: 이미지 위에 겹쳐지는 맛집 이름
+   기능:
+
+   margin-top: -75px → 위로 올려서 이미지와 겹침
+   흰색 텍스트 + 검은 그림자
+
+
+
+   .theEnd p
+
+   역할: 맛집 이름 텍스트
+   기능: 큰 글씨(40px), 굵은 글씨, 텍스트 그림자 */
+.bigPicture {
+    margin-top: 60px;
+    position: relative;
+}
+
+.bigPicture img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    opacity: 0.9;
+}
+
+.theEnd {
+    position: relative;
+    margin-top: -75px;
+    text-align: left;
+    padding-left: 40px;
+}
+
+.theEnd p {
+    font-size: 40px;
+    letter-spacing: 6px;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    font-weight: bold;
+}
+
+/* ========== 🔥 기본 정보 섹션 (중앙 정렬) ========== */
+/* 📋 4. 기본 정보 섹션 (78~169줄)
+   .info-section
+
+   역할: 맛집 정보를 감싸는 영역
+   기능: Flexbox로 중앙 정렬
+
+   .info-container
+
+   역할: 실제 정보가 들어가는 박스
+   기능: 최대 너비 700px
+
+   .info-container h1
+
+   역할: 맛집 이름
+   기능: 큰 글씨(35px), 중앙 정렬, 글자 간격
+
+   .info-container h5
+
+   역할: 카테고리 (예: "한식", "양식")
+   기능: 회색, 중앙 정렬 */
+.info-section {
+    display: flex;
+    justify-content: center;
+    margin: 80px 0;
+    width: 100%;
+}
+
+.info-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 0 30px;
+}
+
+.info-container h1 {
+    text-align: center;
+    letter-spacing: 5px;
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.info-container h5 {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* 별점 스타일 */
+/* ⭐ 별점 (110~119줄)
+   .rating
+
+   역할: 별점 표시 영역
+   구조: ⭐⭐⭐⭐⭐
+
+   .rating .star
+
+   역할: 별 하나
+   기능: 기본 투명도 0.3 (빈 별)
+
+   .rating .star.filled
+
+   역할: 채워진 별
+   기능: 투명도 1.0 (밝은 별) */
+.rating {
+    text-align: center;
+    margin: 15px 0;
+    font-size: 24px;
+}
+
+.rating .star {
+    opacity: 0.3;
+}
+
+.rating .star.filled {
+    opacity: 1;
+}
+
+/* 정보 스타일 */
+/* 💰 가격 & 정보 (121~143줄)
+   .price
+
+   역할: 가격 표시
+   기능: 빨간색(#e74c3c), 큰 글씨(20px)
+
+   .info
+
+   역할: 영업시간, 전화번호 등
+   기능: 중앙 정렬
+
+   .description
+
+   역할: 맛집 설명
+   기능:
+
+   text-align: justify → 양쪽 정렬
+   줄 간격 1.5 */
+.price {
+    font-size: 20px;
+    color: #e74c3c;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.info {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #333;
+    text-align: center;
+}
+
+.description {
+    font-size: 15px;
+    color: gray;
+    margin: 20px 0;
+    line-height: 24px;
+    text-align: justify;
+}
+
+/* 버튼 그룹 */
+/* 🔘 버튼 그룹 (145~169줄)
+   .button-group
+
+   역할: 목록, 수정, 삭제 버튼 영역
+
+   .btn-back, .btn-edit, .btn-delete
+
+   역할: 각 버튼
+   기능: 회색(목록) / 파란색(수정) / 빨간색(삭제) */
+.button-group {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.btn-back {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-back:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-edit {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #2980b9;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+/* ========== HR ========== */
+hr {
+    color: lightgray;
+    width: 100%;
+    margin: 50px 0;
+    border: 1px solid #ddd;
+}
+
+/* ========== 🔥 추가 이미지 섹션 (카페 글쓰기 스타일) ========== */
+/* 🖼️ 5. 추가 이미지 섹션 (177~268줄)
+   .additional-images-section
+
+   역할: 메뉴/인테리어 추가 사진 영역
+   기능: 최대 너비 1000px
+
+   .section-title
+
+   역할: "메뉴 사진" 같은 섹션 제목
+
+   .images-container
+
+   역할: 이미지들을 세로로 배치
+   기능: Flexbox 세로 방향, 50px 간격
+
+   .image-content-block
+
+   역할: 이미지 + 설명 묶음 */
+.additional-images-section {
+    width: 100%;
+    max-width: 1000px;
+    padding: 0 30px;
+    margin: 50px auto;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 3px;
+    font-size: 28px;
+    word-spacing: normal;
+}
+
+.images-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+/* 각 이미지 + 설명 블록 */
+.image-content-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 🎯 이미지 래퍼 - 크기 조정 */
+/* 🎯 이미지 래퍼 (217~257줄)
+   .image-wrapper
+
+   역할: 이미지를 감싸는 컨테이너
+   기능: 최대 너비 600px
+
+   .image-wrapper img
+
+   역할: 실제 이미지
+   기능:
+
+   최대 크기 500x400px
+   object-fit: contain → 비율 유지하며 포함
+   마우스 올리면 살짝 확대 (scale(1.02))
+   중앙 정렬 (margin: 0 auto)
+
+
+
+   .image-description
+
+   역할: 이미지 설명 박스
+   기능:
+
+   연한 회색 배경
+   왼쪽에 파란색 굵은 선
+   이미지와 같은 너비(500px) */
+.image-wrapper {
+    width: 100%;
+    max-width: 600px;  /* 원래 500px → 600px (컨테이너 크기) */
+    margin: 0 auto 20px;
+    text-align: center;
+}
+
+/* 🎯 이미지 자체 - 크기 줄이고 중앙 정렬 */
+.image-wrapper img {
+    width: 100%;
+    max-width: 500px;      /* ✅ 350px → 500px */
+    height: auto;
+    max-height: 400px;     /* ✅ 250px → 400px */
+    object-fit: contain;   /* ✅ 비율 유지하며 포함 */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: block;
+    margin: 0 auto;        /* ✅ 중앙 정렬 */
+}
+
+.image-wrapper img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* 🎯 이미지 설명 - 이미지와 같은 너비로 */
+.image-description {
+    width: 100%;
+    max-width: 500px;      /* ✅ 350px → 500px */
+    margin: 0 auto;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    border-radius: 5px;
+}
+
+.image-description p {
+    font-size: 16px;
+    line-height: 24px;
+    color: #333;
+    margin: 0;
+    text-align: left;
+    word-break: keep-all;
+    word-wrap: break-word;
+}
+
+/* 💡 더 작게 하고 싶으면:
+   max-width: 350px,
+   max-height: 250px
+   정도로 조정하세요! */
+
+/* ========== 이미지 확대 모달 ========== */
+/* 🔍 6. 이미지 확대 모달 (272~308줄)
+   .image-modal
+
+   역할: 이미지 클릭 시 전체 화면 모달
+   기능:
+
+   기본 상태: 숨김 (display: none)
+   .active 클래스 추가 시: 표시 (display: flex)
+   검은색 반투명 배경 (rgba(0,0,0,0.9))
+
+
+
+   .image-modal img
+
+   역할: 확대된 이미지
+   기능: 최대 90% 크기
+
+   .close-btn
+
+   역할: X 닫기 버튼
+   기능: 우측 상단, 흰색, 마우스 올리면 빨간색 */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-modal.active {
+    display: flex;
+}
+
+.image-modal img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-modal .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.image-modal .close-btn:hover {
+    color: #e74c3c;
+}
+
+/* ========== LOCATION SECTION ========== */
+/* 📍 7. 위치 섹션 (310~336줄)
+   .address
+
+   역할: 주소 정보 영역
+
+   .address h1
+
+   역할: "Location" 제목
+
+   .address p
+
+   역할: 실제 주소
+
+   p.st
+
+   역할: 특별 강조 텍스트
+   기능: 청록색(cadetblue), 큰 글씨 */
+.address {
+    width: 100%;
+    padding: 0 30px;
+}
+
+.address h1 {
+    letter-spacing: 5px;
+    font-size: 35px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.address p {
+    font-size: 16px;
+    margin: 15px 0;
+    line-height: 24px;
+    text-align: center;
+}
+
+p.st {
+    font-size: 20px;
+    color: cadetblue;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* ========== 🗺️ 카카오맵 스타일 ========== */
+/* 🗺️ 8. 카카오맵 (338~353줄)
+   .kakao-map-container
+
+   역할: 지도 영역
+   기능:
+
+   고정 높이 400px
+   둥근 모서리, 그림자
+   모바일에서 높이 축소 (400px → 300px → 250px) */
+.kakao-map-container {
+    width: 100%;
+    height: 400px;
+    margin: 30px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* 모바일에서 지도 높이 조정 */
+@media (max-width: 768px) {
+    .kakao-map-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kakao-map-container {
+        height: 250px;
+    }
+}
+
+/* ========== FOOTER ========== */
+/* 🦶 9. Footer (355~369줄)
+   footer
+
+   역할: 페이지 하단
+   기능: 회색 배경, 중앙 정렬 */
+footer {
+    padding: 32px;
+    background-color: lightgray;
+    text-align: center;
+    width: 100%;
+    margin-top: 50px;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+footer a {
+    color: black;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #3498db;
+}
+
+/* ========== 반응형 디자인 (개선) ========== */
+
+/* 🍔 상단 내비게이션 숨기기 (navbar와 중복) */
+/* 📱 10. 반응형 (371~699줄)
+   @media (max-width: 968px)
+
+   핵심: nav { display: none } → 상단 네비 숨김 (navbar.css와 중복 방지)
+
+   @media (max-width: 768px) - 태블릿
+
+   대표 이미지 높이 축소 (500px → 300px)
+   맛집 이름 글씨 축소 (40px → 28px)
+   버튼 세로 배치, 가로 100%
+   추가 이미지 최대 높이 350px
+
+   @media (max-width: 480px) - 모바일
+
+   대표 이미지 더 축소 (300px → 220px)
+   모든 글씨 크기 축소
+   버튼 크기 축소
+   추가 이미지 최대 높이 280px
+
+   @media (max-width: 360px) - 초소형
+
+   극단적인 크기 축소 */
+@media (max-width: 968px) {
+    nav {
+        display: none; /* navbar가 있으니 숨김 */
+    }
+
+    .bigPicture {
+        margin-top: 0; /* nav 숨김으로 margin 제거 */
+    }
+}
+
+/* 📱 태블릿 (768px 이하) */
+@media (max-width: 768px) {
+    /* 대표 이미지 */
+    .bigPicture img {
+        height: 300px;
+    }
+
+    .theEnd {
+        margin-top: -60px;
+        padding-left: 20px;
+    }
+
+    .theEnd p {
+        font-size: 28px;
+        letter-spacing: 3px;
+    }
+
+
+
+    .btn-bookmark-detail {
+        padding: 12px 24px;
+        font-size: 15px;
+    }
+
+    /* 기본 정보 섹션 */
+    .info-section {
+        margin: 50px 0;
+    }
+
+    .info-container {
+        padding: 0 20px;
+    }
+
+    .info-container h1 {
+        font-size: 28px;
+        letter-spacing: 3px;
+    }
+
+    .info-container h5 {
+        font-size: 16px;
+    }
+
+    .rating {
+        font-size: 20px;
+    }
+
+    .price {
+        font-size: 18px;
+    }
+
+    .info {
+        font-size: 15px;
+    }
+
+    .description {
+        font-size: 14px;
+        line-height: 22px;
+    }
+
+    /* 버튼 그룹 */
+    .button-group {
+        margin-top: 20px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        margin: 10px auto;
+        padding: 12px 20px;
+        font-size: 15px;
+    }
+
+    /* 추가 이미지 섹션 */
+    .section-title {
+        font-size: 24px;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+    }
+
+    .additional-images-section {
+        padding: 0 20px;
+        margin: 40px auto;
+    }
+
+    .images-container {
+        gap: 40px;
+    }
+
+    .image-wrapper {
+        max-width: 100%;
+    }
+
+    .image-wrapper img {
+        max-width: 100%;
+        max-height: 350px;
+    }
+
+    .image-description {
+        max-width: 100%;
+    }
+
+    .image-description p {
+        font-size: 15px;
+        line-height: 22px;
+    }
+
+    /* 위치 섹션 */
+    .address h1 {
+        font-size: 28px;
+        letter-spacing: 3px;
+    }
+
+    .address p {
+        font-size: 15px;
+        padding: 0 10px;
+    }
+
+    p.st {
+        font-size: 18px;
+    }
+
+    /* 카카오맵 */
+    .kakao-map-container {
+        height: 300px;
+        margin: 20px auto;
+    }
+
+    /* HR 간격 조정 */
+    hr {
+        margin: 40px 0;
+    }
+}
+
+/* 📱 모바일 (480px 이하) */
+@media (max-width: 480px) {
+    /* 대표 이미지 */
+    .bigPicture img {
+        height: 220px;
+    }
+
+    .theEnd {
+        margin-top: -50px;
+        padding-left: 15px;
+    }
+
+    .theEnd p {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+
+    /* 북마크 버튼 */
+    .btn-bookmark-detail {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .btn-bookmark-detail .icon-heart {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* 기본 정보 */
+    .info-section {
+        margin: 40px 0;
+    }
+
+    .info-container {
+        padding: 0 15px;
+    }
+
+    .info-container h1 {
+        font-size: 24px;
+        letter-spacing: 2px;
+    }
+
+    .info-container h5 {
+        font-size: 15px;
+    }
+
+    .rating {
+        font-size: 18px;
+        margin: 12px 0;
+    }
+
+    .price {
+        font-size: 17px;
+    }
+
+    .info {
+        font-size: 14px;
+    }
+
+    .description {
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    /* 버튼 */
+    .btn {
+        padding: 11px 18px;
+        font-size: 14px;
+        max-width: 100%;
+    }
+
+    /* 추가 이미지 */
+    .section-title {
+        font-size: 20px;
+        letter-spacing: 1px;
+        margin-bottom: 25px;
+    }
+
+    .additional-images-section {
+        padding: 0 15px;
+        margin: 30px auto;
+    }
+
+    .images-container {
+        gap: 30px;
+    }
+
+    .image-wrapper img {
+        max-height: 280px;
+    }
+
+    .image-description {
+        padding: 12px 15px;
+    }
+
+    .image-description p {
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    /* 위치 섹션 */
+    .address {
+        padding: 0 15px;
+    }
+
+    .address h1 {
+        font-size: 24px;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+    }
+
+    .address p {
+        font-size: 14px;
+    }
+
+    p.st {
+        font-size: 16px;
+    }
+
+    /* 카카오맵 */
+    .kakao-map-container {
+        height: 250px;
+        margin: 15px auto;
+    }
+
+    /* HR */
+    hr {
+        margin: 30px 0;
+    }
+
+    /* 푸터 */
+    footer {
+        padding: 20px;
+        margin-top: 40px;
+    }
+
+    footer p {
+        font-size: 13px;
+    }
+}
+
+/* 📱 아주 작은 모바일 (360px 이하) */
+@media (max-width: 360px) {
+    .theEnd p {
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .info-container h1 {
+        font-size: 22px;
+    }
+
+    .btn-bookmark-detail {
+        padding: 9px 16px;
+        font-size: 13px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .image-wrapper img {
+        max-height: 240px;
+    }
+}
+
+/* 🖼️ 이미지 모달 반응형 */
+@media (max-width: 768px) {
+    .image-modal .close-btn {
+        top: 15px;
+        right: 20px;
+        font-size: 35px;
+    }
+
+    .image-modal img {
+        max-width: 95%;
+        max-height: 85%;
+    }
+}
+
+@media (max-width: 480px) {
+    .image-modal .close-btn {
+        top: 10px;
+        right: 15px;
+        font-size: 30px;
+    }
+}
+
+
+
+/* ========== 북마크 섹션 - 데스크톱용 ========== */
+/* ⭐ 11. 북마크 버튼 (706~753줄)
+   .bookmark-section
+
+   역할: 북마크 버튼 영역
+   기능: 중앙 정렬
+
+   .btn-bookmark-detail
+
+   역할: 북마크 추가/제거 버튼
+   기능:
+
+   흰색 배경, 검은 테두리
+   Flexbox로 아이콘 + 텍스트 배치
+   마우스 올리면 확대 (scale(1.08))
+
+
+
+   .btn-bookmark-detail .icon-heart
+
+   역할: 하트 아이콘
+   기능:
+
+   기본: 빈 하트 (테두리만)
+   .active: 빨간 하트 (채워짐) */
+.bookmark-section {
+    text-align: center;
+    padding: 15px 0;
+    margin: 0;
+    background-color: transparent;
+    width: 100%;
+}
+
+.btn-bookmark-detail {
+    background: white;
+        border: 2px solid #333;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 15px 35px;
+        font-size: 18px;
+        border-radius: 8px;
+        color: #333;
+        font-weight: 600;
+        transition: all 0.3s;
+        z-index: 10;
+        line-height: 1;
+        vertical-align: middle;
+
+}
+
+.btn-bookmark-detail:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.3);
+}
+
+.btn-bookmark-detail .icon-heart {
+    width: 28px;
+        height: 28px;
+        color: #333;
+        fill: none;
+        stroke: #333;
+        stroke-width: 2;
+        transition: all 0.3s;
+    pointer-events: none;
+}
+
+.btn-bookmark-detail.active {
+    background: white;
+    border-color: #333;
+    color: #333;
+}
+
+.btn-bookmark-detail.active .icon-heart {
+    color: #e74c3c;
+    fill: #e74c3c;
+    stroke: #e74c3c;
+}
+
+.btn-bookmark-detail:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

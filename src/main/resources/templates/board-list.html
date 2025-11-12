@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자유게시판 - 맛집 추천</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/board-list.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="board-header">
+        <h1>자유게시판</h1>
+        <p>맛집에 관한 다양한 이야기를 나눠보세요!</p>
+    </div>
+
+    <!-- 검색 섹션 -->
+    <div class="search-section">
+        <form method="get" th:action="@{/boards}" class="search-form">
+            <input type="text" name="keyword" th:value="${keyword}"
+                   placeholder="검색어를 입력하세요 (제목, 내용)" class="search-input">
+            <button type="submit" class="btn-search">검색</button>
+            <a th:href="@{/boards}" class="btn-reset">초기화</a>
+        </form>
+    </div>
+
+    <!-- 성공/에러 메시지 -->
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- 새 글 작성 버튼 (로그인한 사용자만) -->
+    <div class="board-actions">
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/boards/new}" class="btn btn-primary">새 글 작성</a>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <p class="login-prompt">
+                <a th:href="@{/login}">로그인</a>하면 게시글을 작성할 수 있습니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div class="board-list">
+        <div th:if="${boards.isEmpty()}" class="no-content">
+            <p>게시글이 없습니다.</p>
+        </div>
+
+        <div th:unless="${boards.isEmpty()}" class="board-table-wrapper">
+            <table class="board-table">
+                <thead>
+                <tr>
+                    <th class="col-num">번호</th>
+                    <th class="col-title">제목</th>
+                    <th class="col-author">작성자</th>
+                    <th class="col-date">작성일</th>
+                    <th class="col-views">조회</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="board, iterStat : ${boards.content}" class="board-row">
+                    <td class="col-num" th:text="${boards.totalElements - (currentPage * boards.size + iterStat.index)}">1</td>
+                    <td class="col-title">
+                        <a th:href="@{/boards/{id}(id=${board.id})}"
+                           th:text="${board.title}">게시글 제목</a>
+                    </td>
+                    <td class="col-author" th:text="${board.author.username}">작성자</td>
+                    <td class="col-date" th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">
+                        2024-01-01 12:00
+                    </td>
+                    <td class="col-views">
+                        <span class="view-count" th:text="${board.viewCount}">0</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 페이징 네비게이션 -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <!-- 이전 페이지 -->
+        <a th:if="${currentPage > 0}"
+           th:href="@{/boards(page=${currentPage - 1}, keyword=${keyword})}"
+           class="page-btn prev">이전</a>
+        <span th:if="${currentPage == 0}" class="page-btn prev disabled">이전</span>
+
+        <!-- 페이지 번호 -->
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-numbers">
+            <a th:if="${i != currentPage}"
+               th:href="@{/boards(page=${i}, keyword=${keyword})}"
+               th:text="${i + 1}"
+               class="page-btn">1</a>
+            <span th:if="${i == currentPage}" th:text="${i + 1}" class="page-btn active">1</span>
+        </span>
+
+        <!-- 다음 페이지 -->
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/boards(page=${currentPage + 1}, keyword=${keyword})}"
+           class="page-btn next">다음</a>
+        <span th:if="${currentPage == totalPages - 1}" class="page-btn next disabled">다음</span>
+    </div>
+
+    <!-- 통계 -->
+    <div class="board-stats">
+        <p>총 <strong th:text="${totalElements}">0</strong>개의 게시글</p>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 맛집 추천 | <a th:href="@{/restaurants}">맛집 목록</a></p>
+</footer>
+
+<script th:src="@{/js/board-list.js}"></script>
+</body>
+</html>

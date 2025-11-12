@@ -1,0 +1,233 @@
+<!-- 카카오맵 통합 -->
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- 🔥 CSRF 토큰 메타태그 추가 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title>맛집 상세 정보</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/restaurant-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<!-- 🧭 네비게이션 바 추가 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+<div class="all">
+    <!-- ========== HEADER ========== -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="wings">
+                    <div class="left">
+                        <a th:href="@{/}">MainPage</a>
+                    </div>
+                    <div class="right">
+                        <a th:href="@{/restaurants}">Menu list</a>
+                        <a href="#location">찾아오시는길</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- ✅ 메인 이미지 -->
+        <div class="bigPicture">
+            <img th:src="${restaurant.mainImagePath}"
+                 th:alt="${restaurant.name}"
+                 width="1000" height="500"
+                 onerror="this.style.display='none'">
+        </div>
+
+        <!-- ✅ 북마크 섹션 (theEnd 밖으로 이동) -->
+        <div class="bookmark-section">
+            <button id="bookmarkBtn"
+                    class="btn-bookmark-detail"
+                    th:data-restaurant-id="${restaurant.id}"
+                    title="북마크">
+                <svg class="icon-heart" fill="currentColor" viewBox="0 0 24 24" style="pointer-events: auto;">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span class="btn-text" style="margin-left: 8px; margin-right: 8px;">북마크</span>
+                <span id="bookmarkCount" style="margin-left: 8px; font-weight: 700;">0</span>
+            </button>
+        </div>
+
+        <!-- ✅ 맛집 이름 -->
+        <div class="theEnd">
+            <p th:text="${restaurant.name}">맛있는 맛집</p>
+        </div>
+    </header>
+
+    <!-- ========== MAIN SECTION (기본 정보) ========== -->
+    <section class="info-section">
+        <div class="info-container">
+            <h1 th:text="${restaurant.name}">맛집 이름</h1>
+            <h5 th:text="${restaurant.category}">카테고리</h5>
+
+            <!-- 별점 표시 -->
+            <div class="rating">
+                <th:block th:with="stars=${restaurant.rating != null ? restaurant.rating : 0}">
+                    <span th:each="i : ${#numbers.sequence(1, 5)}"
+                          th:class="${i <= stars} ? 'star filled' : 'star'">⭐</span>
+                </th:block>
+            </div>
+
+            <!-- 가격 정보 -->
+            <p class="price">
+                <strong>💰 가격:</strong>
+                <span th:text="${restaurant.price != null ? restaurant.price + '원' : '문의'}">15,000원</span>
+            </p>
+
+            <!-- 주소 -->
+            <p class="info">
+                <strong>📍 주소:</strong>
+                <span th:text="${restaurant.address}">서울시 강남구...</span>
+            </p>
+
+            <!-- 전화번호 -->
+            <p class="info">
+                <strong>📞 전화:</strong>
+                <span th:text="${restaurant.phone}">02-1234-5678</span>
+            </p>
+
+            <!-- 설명 -->
+            <p class="description" th:text="${restaurant.description}">
+                맛집 설명이 여기에 표시됩니다.
+            </p>
+
+            <!-- 버튼 영역 -->
+            <div class="button-group">
+                <a th:href="@{/restaurants}" class="btn btn-back">← 목록으로</a>
+
+                <!-- 🔐 로그인한 사용자만 수정/삭제 버튼 표시 -->
+                <div sec:authorize="isAuthenticated()">
+                    <!-- 작성자 본인 또는 관리자만 수정/삭제 가능 -->
+                    <th:block th:if="${restaurant.author != null &&
+                          (#authentication.name == restaurant.author.username ||
+                           #authorization.expression('hasRole(''ADMIN'')'))}">
+                        <a th:href="@{/restaurants/{id}/edit(id=${restaurant.id})}" class="btn btn-edit">수정</a>
+                        <form th:action="@{/restaurants/{id}/delete(id=${restaurant.id})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                            <button type="submit" class="btn btn-delete">삭제</button>
+                        </form>
+                    </th:block>
+
+                    <!-- 🔍 디버깅용: 권한 없을 때 메시지 (선택사항) -->
+                    <th:block th:if="${restaurant.author == null ||
+                          (#authentication.name != restaurant.author.username &&
+                           !#authorization.expression('hasRole(''ADMIN'')'))}">
+                        <p style="color: #999; font-size: 14px; margin: 10px 0;">
+                            ℹ️ 이 맛집은
+                            <span th:text="${restaurant.author != null ? restaurant.author.username : '알 수 없는 사용자'}"></span>
+                            님이 작성했습니다.
+                        </p>
+                    </th:block>
+                </div>
+
+                <!-- 🔓 비로그인 상태 안내 -->
+                <div sec:authorize="!isAuthenticated()">
+                    <p style="color: #999; font-size: 14px; margin: 10px 0;">
+                        ℹ️ 수정/삭제하려면 <a th:href="@{/login}" style="color: #667eea;">로그인</a>이 필요합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== 🔥 추가 이미지 섹션 (카페 글쓰기 스타일) ========== -->
+    <section class="additional-images-section"
+             th:if="${restaurant.images != null && restaurant.images.size() > 1}">
+        <h2 class="section-title">📸 추가 이미지</h2>
+
+        <div class="images-container">
+            <!-- 대표 이미지가 아닌 것들만 세로로 나열 -->
+            <div th:each="image, iterStat : ${restaurant.images}"
+                 th:if="${!image.isMainImage}"
+                 class="image-content-block">
+
+                <!-- 이미지 -->
+                <div class="image-wrapper">
+                    <img th:src="${image.filePath}"
+                         th:alt="${image.description}"
+                         onclick="openImageModal(this.src)"
+                         onerror="this.style.display='none'">
+                </div>
+
+                <!-- 설명 (항상 표시 - 없으면 기본 메시지) -->
+                <div class="image-description">
+                    <p th:text="${image.description != null && !#strings.isEmpty(image.description) ? image.description : '이미지 설명 없음'}">이미지 설명</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- ========== LOCATION SECTION (카카오맵 포함)========== -->
+    <section id="location">
+        <div class="address">
+            <h1>찾아오시는길</h1>
+            <p class="st">
+                <b th:text="${restaurant.address}">서울시 강남구 테헤란로 123</b>
+            </p>
+            <p>
+                <strong>전화문의:</strong> <span th:text="${restaurant.phone}">02-1234-5678</span>
+            </p>
+            <!-- 🔥 카카오맵 컨테이너 -->
+            <div id="map" class="kakao-map-container"></div>
+            <!-- 지도 로딩 중 메시지 -->
+            <p id="mapLoadingMessage" style="text-align: center; color: #999; margin-top: 20px;">
+                <em>🗺️ 지도를 불러오는 중입니다...</em>
+            </p>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+        <p>개인프로젝트 진행중 | <a th:href="@{/restaurants}">맛집 목록으로</a></p>
+    </footer>
+</div>
+
+<!-- ========== 이미지 확대 모달 ========== -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close-btn" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" src="" alt="확대 이미지" onclick="event.stopPropagation()">
+</div>
+
+<!-- ========== JavaScript (순서 중요!) ========== -->
+<!-- 카카오맵 API KaKao Developers가입 생성된 javascript API주소 생성-->
+<!-- 프로토콜 상대 URL 사용 (// 시작) -->
+<!-- 왜 //를 사용하나요?
+//dapi.kakao.com은 현재 페이지의 프로토콜을 자동으로 따릅니다
+http://localhost:8080 → http://dapi.kakao.com 사용
+https://domain.com → https://dapi.kakao.com 사용 -->
+<!-- 1. 카카오맵 API -->
+<script type="text/javascript"
+        src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=92654744e8b63343da4840862a58279c&libraries=services&autoload=false">
+</script>
+
+<!-- 2. 레스토랑 데이터 정의 -->
+<script th:inline="javascript">
+    window.restaurantData = {
+        name: /*[[${restaurant.name}]]*/ '맛집',
+        address: /*[[${restaurant.address}]]*/ '',
+        phone: /*[[${restaurant.phone}]]*/ '',
+        latitude: /*[[${restaurant.latitude}]]*/ null,
+        longitude: /*[[${restaurant.longitude}]]*/ null
+    };
+    console.log('📊 레스토랑 데이터:', window.restaurantData);
+</script>
+<!-- 3. 카카오맵 초기화 (API 로드 후 실행) -->
+<script th:src="@{/js/restaurant-map.js}"></script>
+<!-- 북마크 하기위한 설정 -->
+<script th:src="@{/js/restaurant-detail.js}"></script>
+</body>
+</html>

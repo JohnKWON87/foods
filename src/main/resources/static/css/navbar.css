@@ -1,0 +1,518 @@
+/* ========== 네비게이션 바 스타일 ========== */
+/* 🎨 1. 네비바 기본 (2~14줄)
+   .navbar
+
+   역할: 페이지 상단 고정 메뉴바
+   기능:
+
+   position: sticky → 스크롤해도 상단 고정
+   보라색 그라데이션 배경
+   z-index: 1000 → 다른 요소 위에 표시
+
+
+
+   .navbar-container
+
+   역할: 네비바 내부 컨텐츠 배치
+   기능:
+
+   최대 너비 1200px
+   Flexbox로 좌우 배치 (space-between)
+   로고(왼쪽) | 메뉴(중간) | 사용자 정보(오른쪽 */
+.navbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    gap: 20px;
+}
+
+/* ========== 로고 ========== */
+/* 🏷️ 2. 로고 (16~27줄)
+   .navbar-brand a
+
+   역할: "맛집 투어" 로고
+   기능:
+
+   흰색, 굵은 글씨(24px)
+   마우스 올리면 살짝 커짐 (scale(1.05))
+ */
+.navbar-brand a {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+}
+
+.navbar-brand a:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+/* ========== 메뉴 ========== */
+/* 📋 3. 메뉴 (29~76줄)
+   .navbar-menu
+
+   역할: 메뉴 링크들을 가로로 배치
+   구조: [홈] [맛집 찾기] [커뮤니티] [북마크] [관리자]
+
+   .nav-link
+
+   역할: 개별 메뉴 링크
+   기능:
+
+   반투명 흰색
+   마우스 올리면 밝은 배경 + 위로 살짝 올라감
+   하단에 밑줄 애니메이션 (::after)
+
+
+
+   .nav-link::after
+
+   역할: 마우스 올릴 때 나타나는 밑줄
+   효과: 왼쪽에서 오른쪽으로 그어짐 (width: 0 → 100%) */
+
+.navbar-menu {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    flex: 1;
+    margin-left: 40px;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.6);
+    transition: width 0.3s;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* 관리자 메뉴 강조 */
+/* 🔴 관리자 메뉴 (68~76줄)
+   .nav-admin
+
+   역할: 관리자 메뉴 강조
+   기능: 빨간색 배경 + 테두리로 구분 */
+.nav-admin {
+    background-color: rgba(231, 76, 60, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.nav-admin:hover {
+    background-color: rgba(231, 76, 60, 0.4);
+}
+
+/* ========== 사용자 정보 영역 ========== */
+/* 👤 4. 사용자 영역 (78~164줄)
+   .navbar-user
+
+   역할: 우측 사용자 정보 영역 */
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    white-space: nowrap;
+}
+
+/* 비로그인 버튼 */
+/* 🔒 비로그인 버튼 (82~127줄)
+   .auth-buttons
+
+   역할: 로그인/회원가입 버튼 영역
+
+   .btn-login
+
+   역할: 로그인 버튼
+   기능: 투명 배경 + 흰색 테두리
+
+   .btn-signup
+
+   역할: 회원가입 버튼
+   기능: 흰색 배경 + 보라색 글씨 */
+.auth-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-login,
+.btn-signup {
+    padding: 9px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.btn-login {
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    background: transparent;
+}
+
+.btn-login:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+.btn-signup {
+    background: white;
+    color: #667eea;
+    border: 1.5px solid white;
+}
+
+.btn-signup:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 로그인 사용자 정보 */
+/* 👤 로그인 사용자 정보 (129~164줄)
+   .user-info
+
+   역할: "홍길동님" + 로그아웃 버튼
+
+   .username
+
+   역할: 사용자 이름
+   기능: 흰색, 굵은 글씨
+
+   .btn-logout
+
+   역할: 로그아웃 버튼
+   기능: 반투명 배경, 마우스 올리면 더 밝아짐 */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.username {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.btn-logout {
+    padding: 9px 22px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+/* ========== 🍔 햄버거 버튼 (기본적으로 숨김) ========== */
+/* 🍔 5. 햄버거 버튼 (166~200줄)
+   .navbar-toggle
+
+   역할: 모바일 전용 메뉴 토글 버튼 (☰)
+   기능:
+
+   기본 상태: 숨김 (display: none)
+   모바일에서만 표시
+
+
+
+   .navbar-toggle span
+
+   역할: 햄버거 버튼의 3개 줄
+   기능: 흰색 가로선 3개
+
+   .navbar-toggle.active
+
+   역할: 메뉴 열렸을 때 X자로 변환
+   효과:
+
+   첫 번째 줄: 45도 회전
+   두 번째 줄: 투명
+   세 번째 줄: -45도 회전
+   → ☰ 에서 ✕ 로 변환 */
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 10;
+}
+
+.navbar-toggle span {
+    width: 30px;
+    height: 3px;
+    background: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* 햄버거 버튼 활성화 시 X자 변환 */
+.navbar-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(7px, 7px);
+}
+
+.navbar-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ========== 반응형 디자인 ========== */
+/* 📱 6. 반응형 - 태블릿 (202~285줄)
+   @media (max-width: 768px)
+   핵심 변화:
+
+   햄버거 버튼 표시
+
+   css   .navbar-toggle { display: flex; }
+
+   메뉴 세로 배치 + 숨김
+
+   css   .navbar-menu {
+          display: none;  기본 숨김
+          flex-direction: column;  세로
+      }
+      .navbar-menu.active {
+          display: flex;  버튼 클릭 시 표시
+      }
+   ```
+
+   3. **레이아웃 순서**
+      - 로고 (왼쪽)
+      - 햄버거 버튼 (오른쪽)
+      - 메뉴 (숨김 → 클릭 시 펼쳐짐)
+      - 사용자 정보 (숨김 → 클릭 시 펼쳐짐)
+
+   ---
+
+   ## 📱 **7. 반응형 - 모바일 (287~317줄)**
+
+   ### `@media (max-width: 480px)`
+   - 로고 크기 축소 (24px → 20px)
+   - 햄버거 버튼 크기 축소
+   - 메뉴 글씨 축소
+
+   ---
+
+   ## ⭐ **8. 북마크 메뉴 (319~325줄)**
+
+   ### `.nav-bookmark`
+   - **역할**: 북마크 메뉴 강조
+   - **기능**: 빨간색 배경 (관리자와 다른 색)
+
+   ---
+
+   ## 💡 **핵심 기능 요약**
+
+   ### **데스크톱**
+   ```
+   [로고] [홈] [맛집찾기] [커뮤니티] [북마크] [관리자]    [홍길동님] [로그아웃]
+   ```
+
+   ### **모바일 (기본)**
+   ```
+   [로고]                                                      [☰]
+   ```
+
+   ### **모바일 (메뉴 펼침)**
+   ```
+   [로고]                                                      [✕]
+   ┌──────────────────────┐
+   │       홈              │
+   │    맛집 찾기          │
+   │    커뮤니티           │
+   │     북마크            │
+   │     관리자            │
+   ├──────────────────────┤
+   │  홍길동님  [로그아웃]  │
+   └──────────────────────┘ */
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-wrap: wrap;
+        padding: 12px 20px;
+    }
+
+    /* 🍔 햄버거 버튼 표시 */
+    .navbar-toggle {
+        display: flex;
+        order: 2; /* 로고 다음 */
+    }
+
+    .navbar-brand {
+        order: 1;
+        flex: 1;
+    }
+
+    /* 메뉴를 세로로 변경하고 숨김 */
+    .navbar-menu {
+        display: none; /* 기본적으로 숨김 */
+        flex-direction: column;
+        width: 100%;
+        order: 4;
+        margin-left: 0;
+        gap: 0;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 10px 0;
+        margin-top: 10px;
+    }
+
+    .navbar-menu.active {
+        display: flex; /* 버튼 클릭 시 표시 */
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 12px 20px;
+        border-radius: 0;
+    }
+
+    .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-link::after {
+        display: none; /* 밑줄 효과 제거 */
+    }
+
+    /* 사용자 영역도 숨김/표시 */
+    .navbar-user {
+        display: none;
+        width: 100%;
+        order: 5;
+        justify-content: center;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-user.active {
+        display: flex;
+    }
+
+    .auth-buttons {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .user-info {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn-login,
+    .btn-signup,
+    .btn-logout {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-container {
+        padding: 12px 15px;
+    }
+
+    .navbar-brand a {
+        font-size: 20px;
+    }
+
+    .navbar-toggle {
+        width: 28px;
+        height: 23px;
+    }
+
+    .navbar-toggle span {
+        width: 28px;
+        height: 2.5px;
+    }
+
+    .nav-link {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+
+    .btn-login,
+    .btn-signup,
+    .btn-logout {
+        padding: 9px 18px;
+        font-size: 13px;
+    }
+}
+
+/* 북마크 메뉴 스타일 */
+.nav-bookmark {
+    background: rgba(255, 107, 107, 0.15);
+    border-radius: 8px;
+}
+
+.nav-bookmark:hover {
+    background: rgba(255, 107, 107, 0.25);
+}
+
+/* 🎯 3개 파일 공통점
+
+   반응형: 768px (태블릿), 480px (모바일) 브레이크포인트
+   색상: 보라색/빨간색 계열 통일
+   호버 효과: translateY(-2px) 위로 올라감
+   Flexbox/Grid: 현대적인 레이아웃
+   애니메이션: 부드러운 전환 효과 */

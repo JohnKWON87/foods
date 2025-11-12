@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>맛집 목록</title>
+
+    <!-- 🔥 이 2줄 추가! -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- CSS 직접 포함 -->
+    <style>
+        /* ========== 기본 스타일 ========== */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: "Montserrat", sans-serif;
+          perspective: 2000px;
+          position: relative;
+          min-height: 100vh;
+          overflow: hidden;
+
+          /* 배경 이미지 설정 */
+          background-image: url('/images/foods.jpg');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+        }
+
+        /* 배경 이미지 위에 반투명 오버레이 (카드가 잘 보이도록) */
+        body::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(232, 230, 231, 0.4);
+          backdrop-filter: blur(1px);
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        /* 배경 빛나는 효과 */
+        body::after {
+          content: '';
+          position: fixed;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+          animation: backgroundShine 15s ease-in-out infinite;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        @keyframes backgroundShine {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(10%, 10%) scale(1.1); }
+        }
+
+        /* ========== 카드 컨테이너 ========== */
+        .card-wrapper {
+          position: relative;
+          width: 100%;
+          height: 100vh;
+          cursor: grab;
+          user-select: none;
+          z-index: 1;
+        }
+
+        .card-wrapper:active {
+          cursor: grabbing;
+        }
+
+        /* ========== 카드 기본 스타일 ========== */
+        .food-card {
+          background-color: #fff;
+          position: absolute;
+          width: 325px;
+          overflow: hidden;
+          border-radius: 30px;
+          box-shadow: -30px 70px 150px -20px rgba(51, 51, 51, 0.25);
+          transform-style: preserve-3d;
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transform: rotateX(22deg) rotate(-14deg) rotateY(17deg) translateZ(var(--z, 0px));
+        }
+
+        .food-card:hover {
+          box-shadow: -30px 70px 200px -20px rgba(51, 51, 51, 0.5);
+        }
+
+        /* ========== 카드 이미지 ========== */
+        .food-card__image {
+          position: relative;
+          height: 160px;
+          overflow: hidden;
+        }
+
+        .food-card__image > img {
+          max-width: 100%;
+          border-bottom-right-radius: 30px;
+          transform: rotate(8deg) translate(-10px, -55px);
+          position: absolute;
+          height: 200px;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+
+        /* ========== 카드 상세 정보 ========== */
+        .food-card__details {
+          display: grid;
+          grid-row-gap: 8px;
+          grid-template: 1fr 1fr / 1fr 1fr;
+          padding: 8px 30px 20px;
+        }
+
+        .food-card__name {
+          grid-column: 1;
+          grid-row: 1;
+          font-size: 18px;
+          font-weight: bold;
+          color: #11313c;
+        }
+
+        .food-card__price {
+          grid-column: 2;
+          grid-row: 1;
+          font-size: 18px;
+          font-weight: bold;
+          color: #f7736e;
+          text-align: right;
+        }
+
+        .food-card__desc {
+          grid-column: 1;
+          grid-row: 2;
+          font-size: 14px;
+          font-weight: 500;
+          color: #949a98;
+        }
+
+        .food-card__rating {
+          grid-column: 2;
+          grid-row: 2;
+          text-align: right;
+        }
+
+        /* ========== 별 모양 ========== */
+        .food-card__star {
+          width: 16px;
+          height: 16px;
+          background-color: #dadada;
+          display: inline-block;
+          clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        .food-card__star:not(:last-child) {
+          margin-right: 6px;
+        }
+
+        .food-card__star--gold {
+          background-color: #e6c356;
+        }
+
+        /* ========== 빈 메시지 ========== */
+        .empty-message {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          font-size: 24px;
+          color: #666;
+          z-index: 1000;
+        }
+
+        .empty-message h2 {
+          margin-bottom: 15px;
+        }
+
+        .empty-message p {
+          margin-bottom: 30px;
+          color: #999;
+        }
+
+        /* ========== 🎯 광고 배너 스타일 ========== */
+        .add-restaurant-banner {
+          position: fixed;
+          bottom: 30px;
+          left: 50%;
+          z-index: 10000;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          padding: 22px 50px;
+
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-radius: 60px;
+          box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+
+          color: white;
+          font-size: 19px;
+          font-weight: 700;
+          text-decoration: none;
+          white-space: nowrap;
+
+          transform: translateX(-50%);
+          transition: all 0.4s ease;
+          animation: glow 2s ease-in-out infinite;
+          cursor: pointer;
+        }
+
+        .add-restaurant-banner::before {
+          content: '✨';
+          font-size: 26px;
+          animation: rotate 4s linear infinite;
+        }
+
+        .add-restaurant-banner::after {
+          content: '+';
+          font-size: 32px;
+          font-weight: 900;
+          line-height: 1;
+          margin-left: 5px;
+        }
+
+        .add-restaurant-banner:hover {
+          transform: translateX(-50%) translateY(-10px) scale(1.1);
+          box-shadow: 0 25px 70px rgba(102, 126, 234, 0.8);
+          animation: none;
+        }
+
+        @keyframes glow {
+          0%, 100% {
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+          }
+          50% {
+            box-shadow: 0 15px 70px rgba(102, 126, 234, 0.9),
+                        0 0 30px rgba(255, 255, 255, 0.3);
+          }
+        }
+
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        /* ========== 드래그 인디케이터 ========== */
+        .drag-indicator {
+          position: fixed;
+          bottom: 130px;
+          left: 50%;
+          transform: translateX(-50%);
+
+          color: rgba(0, 0, 0, 0.6);
+          font-size: 14px;
+          font-weight: 600;
+
+          background: rgba(232, 230, 231, 0.4);
+          padding: 12px 28px;
+          border-radius: 30px;
+          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+          pointer-events: none;
+          z-index: 9999;
+          animation: indicatorFade 2.5s ease-in-out infinite;
+        }
+
+        @keyframes indicatorFade {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+
+        /* ========== 반응형 ========== */
+        @media (max-width: 768px) {
+          .food-card { width: 280px; }
+          .add-restaurant-banner { padding: 18px 40px; font-size: 17px; }
+          .add-restaurant-banner::before { font-size: 22px; }
+          .add-restaurant-banner::after { font-size: 28px; }
+        }
+
+        @media (max-width: 480px) {
+          .food-card { width: 250px; }
+          .food-card__name, .food-card__price { font-size: 16px; }
+          .food-card__desc { font-size: 12px; }
+          .add-restaurant-banner { padding: 15px 35px; font-size: 15px; }
+          .drag-indicator { font-size: 12px; bottom: 110px; }
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+
+<body>
+<!-- 🧭 네비게이션 바 추가 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- ✅ 검색 섹션 추가 -->
+<div style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 600px;">
+    <form method="get" th:action="@{/restaurants}"
+          style="display: flex; gap: 10px; background: rgba(255,255,255,0.95); padding: 15px 20px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+
+        <input type="text"
+               name="keyword"
+               th:value="${keyword}"
+               placeholder="🔍 맛집 이름 또는 주소 검색"
+               style="flex: 1; padding: 12px 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px;">
+
+        <select name="category"
+                style="padding: 12px 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 15px; cursor: pointer;">
+            <option value="">전체</option>
+            <option value="한식" th:selected="${category == '한식'}">한식</option>
+            <option value="중식" th:selected="${category == '중식'}">중식</option>
+            <option value="일식" th:selected="${category == '일식'}">일식</option>
+            <option value="양식" th:selected="${category == '양식'}">양식</option>
+            <option value="분식" th:selected="${category == '분식'}">분식</option>
+            <option value="카페" th:selected="${category == '카페'}">카페</option>
+            <option value="기타" th:selected="${category == '기타'}">기타</option>
+        </select>
+
+        <button type="submit"
+                style="padding: 12px 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+            검색
+        </button>
+
+        <a th:href="@{/restaurants}"
+           style="padding: 12px 20px; background: #757575; color: white; border-radius: 12px; text-decoration: none; display: flex; align-items: center; font-weight: 600;">
+            ↻
+        </a>
+    </form>
+
+    <!-- 검색 결과 표시 -->
+    <div th:if="${keyword != null && !keyword.isEmpty()}"
+         style="margin-top: 10px; text-align: center; color: #333; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 10px; font-size: 14px;">
+        "<strong th:text="${keyword}"></strong>" 검색 결과
+    </div>
+</div>
+
+<!-- ========== 카드 드래그 영역 ========== -->
+<div class="card-wrapper">
+
+    <!-- ========== 식당 카드 반복 출력 ========== -->
+    <div th:each="restaurant : ${restaurants}"
+         th:data-id="${restaurant.id}"
+         class="food-card">
+
+        <!-- 이미지 영역 -->
+        <div class="food-card__image">
+            <img th:src="${restaurant.mainImagePath != null && !#strings.isEmpty(restaurant.mainImagePath) ? restaurant.mainImagePath : '/images/no-image.jpg'}"
+                 th:alt="${restaurant.name}"
+                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22325%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22325%22 height=%22200%22/%3E%3Ctext fill=%22%23999%22 font-family=%22sans-serif%22 font-size=%2224%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3E이미지 없음%3C/text%3E%3C/svg%3E';" />
+        </div>
+
+        <!-- 북마크 버튼 추가 -->
+        <button class="btn-bookmark-card"
+                th:data-restaurant-id="${restaurant.id}"
+                title="북마크"
+                onclick="event.stopPropagation();">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </button>
+
+        <!-- 상세 정보 -->
+        <div class="food-card__details">
+            <span class="food-card__name" th:text="${restaurant.name}">식당명</span>
+            <div class="food-card__price"
+                 th:text="${restaurant.price != null ? restaurant.price + '원' : '-'}">
+                £50
+            </div>
+            <span class="food-card__desc">
+    <span th:text="${restaurant.category}">카테고리</span>
+    <span style="margin-left: 10px; color: #999;">
+        👁️ <span th:text="${restaurant.viewCount != null ? restaurant.viewCount : 0}">0</span>
+    </span>
+</span>
+            <div class="food-card__rating">
+                <th:block th:with="stars=${restaurant.rating != null ? restaurant.rating : 0}">
+                    <div th:each="i : ${#numbers.sequence(1, 5)}"
+                         th:classappend="${i <= stars ? 'food-card__star--gold' : ''}"
+                         class="food-card__star">
+                    </div>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 등록된 식당이 없을 때 ========== -->
+<div class="empty-message" th:if="${#lists.isEmpty(restaurants)}">
+    <h2>등록된 식당이 없습니다.</h2>
+    <p>첫 번째 맛집을 등록해보세요!</p>
+    <br>
+    <a th:href="@{/restaurants/new}" class="add-restaurant-banner">
+        새로운 맛집 추가하기
+    </a>
+</div>
+
+<!-- ========== 드래그 안내 ========== -->
+<div class="drag-indicator" th:if="${!#lists.isEmpty(restaurants)}">
+    ← 드래그하여 더 많은 맛집 보기 →
+</div>
+
+<!-- ========== 광고 배너 ========== -->
+<a th:href="@{/restaurants/new}"
+   class="add-restaurant-banner"
+   th:if="${!#lists.isEmpty(restaurants)}">
+    새로운 맛집 추가하기
+</a>
+
+<!-- ========== JavaScript ========== -->
+<script th:src="@{/js/restaurant-list.js}"></script>
+
+<!-- 드래그 안내 자동 숨김 -->
+<script>
+    setTimeout(() => {
+        const indicator = document.querySelector('.drag-indicator');
+        if (indicator) {
+            indicator.style.transition = 'opacity 1s';
+            indicator.style.opacity = '0';
+            setTimeout(() => indicator.remove(), 1000);
+        }
+    }, 5000);
+
+    /* 북마크 버튼 (카드용) */
+.btn-bookmark-card {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, background 0.2s;
+    z-index: 100;
+}
+
+.btn-bookmark-card svg {
+    width: 24px;
+    height: 24px;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.btn-bookmark-card.active svg {
+    color: #ff6b6b;
+}
+
+.btn-bookmark-card:hover {
+    transform: scale(1.15);
+    background: white;
+}
+
+.btn-bookmark-card:active {
+    transform: scale(0.95);
+}
+
+</script>
+</body>
+</html>

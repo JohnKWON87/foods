@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ✅ 이 2줄 추가! -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title th:text="${board.id != null ? '게시글 수정' : '게시글 작성'} + ' - 맛집 추천'">
+        게시글 작성 - 맛집 추천
+    </title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/board-form.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="form-wrapper">
+        <h1 th:text="${board.id != null ? '게시글 수정' : '게시글 작성'}">
+            게시글 작성
+        </h1>
+
+        <!-- 메시지 표시 -->
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- 게시글 폼 -->
+        <form th:action="${board.id != null ? '/boards/' + board.id + '/edit' : '/boards'}"
+              th:object="${board}"
+              method="post"
+              class="board-form">
+
+            <input type="hidden" th:if="${board.id != null}" th:field="*{id}">
+
+            <!-- 제목 -->
+            <div class="form-group">
+                <label for="title" class="form-label">
+                    제목 <span class="required">*</span>
+                </label>
+                <input type="text"
+                       id="title"
+                       th:field="*{title}"
+                       class="form-input"
+                       placeholder="게시글 제목을 입력하세요 (최대 100자)"
+                       maxlength="100"
+                       required>
+                <div class="form-help">
+                    <span id="titleCount">0</span> / 100
+                </div>
+            </div>
+
+            <!-- 내용 -->
+            <div class="form-group">
+                <label for="content" class="form-label">
+                    내용 <span class="required">*</span>
+                </label>
+                <textarea
+                        id="content"
+                        th:field="*{content}"
+                        class="form-textarea"
+                        placeholder="게시글 내용을 입력하세요 (최대 5000자)"
+                        maxlength="5000"
+                        rows="15"
+                        required></textarea>
+                <div class="form-help">
+                    <span id="contentCount">0</span> / 5000
+                </div>
+            </div>
+
+            <!-- 버튼 -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"
+                        th:text="${board.id != null ? '수정하기' : '작성하기'}">
+                    작성하기
+                </button>
+                <a th:href="${board.id != null ? '/boards/' + board.id : '/boards'}"
+                   class="btn btn-secondary">
+                    취소
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 맛집 추천 | <a th:href="@{/boards}">게시판</a></p>
+</footer>
+
+<script th:src="@{/js/board-form.js}"></script>
+</body>
+</html>

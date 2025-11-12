@@ -1,0 +1,40 @@
+<!-- 홈페이지 / index.html
+비로그인: 로그인/회원가입 버튼
+로그인 상태: "환영합니다 OOO님" + 맛집 둘러보기 버튼-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>맛집 추천 - 홈</title>
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+</head>
+<body>
+<!-- 🧭 네비게이션 바 추가 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <div class="welcome-section">
+        <!-- 비로그인 상태 -->
+        <div sec:authorize="!isAuthenticated()">
+            <h1>🍽️ 맛집 추천</h1>
+            <p>당신의 입맛을 사로잡는 맛집들을 함께 공유하고 추천받아보세요!</p>
+            <div class="auth-buttons">
+                <a href="/login" class="btn btn-primary">로그인</a>
+                <a href="/signup" class="btn btn-secondary">회원가입</a>
+            </div>
+        </div>
+
+        <!-- 로그인 상태 -->
+        <div sec:authorize="isAuthenticated()" class="authenticated-section">
+            <h1>🍽️ 맛집 추천</h1>
+            <p class="welcome-message">
+                환영합니다, <span sec:authentication="principal.username"></span>님! 👋
+            </p>
+            <a href="/restaurants" class="btn btn-primary">맛집 둘러보기</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

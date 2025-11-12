@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 관리 - 관리자</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>👥 회원 관리</h1>
+        <a th:href="@{/admin}" class="btn-back">← 대시보드로</a>
+    </div>
+
+    <!-- 검색 섹션 -->
+    <div class="search-section">
+        <form method="get" th:action="@{/admin/users}" class="search-form">
+            <input type="text"
+                   name="keyword"
+                   th:value="${keyword}"
+                   placeholder="🔍 아이디로 검색"
+                   class="search-input">
+            <button type="submit" class="btn-search">검색</button>
+            <a th:href="@{/admin/users}" class="btn-reset">초기화</a>
+        </form>
+
+        <div th:if="${keyword != null && !keyword.isEmpty()}" class="search-result">
+            "<strong th:text="${keyword}"></strong>" 검색 결과
+        </div>
+    </div>
+
+    <!-- 성공/에러 메시지 -->
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <!-- 회원 목록 -->
+    <div class="admin-section">
+        <h2>📋 전체 회원 목록 (<span th:text="${#lists.size(users)}">0</span>명)</h2>
+
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>아이디</th>
+                    <th>이메일</th>
+                    <th>권한</th>
+                    <th>가입일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}">1</td>
+                    <td th:text="${user.username}">user123</td>
+                    <td th:text="${user.email}">user@example.com</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${user.role == 'ROLE_ADMIN' ? 'badge-admin' : 'badge-user'}"
+                              th:text="${user.role == 'ROLE_ADMIN' ? '관리자' : '일반'}">
+                            일반
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01</td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- 권한 변경 -->
+                            <form th:action="@{/admin/users/{id}/toggle-role(id=${user.id})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  th:onsubmit="'return confirm(\'권한을 변경하시겠습니까?\');'">
+                                <button type="submit" class="btn-action btn-warning">
+                                    <span th:if="${user.role == 'ROLE_ADMIN'}">⬇️ 일반으로</span>
+                                    <span th:if="${user.role != 'ROLE_ADMIN'}">⬆️ 관리자로</span>
+                                </button>
+                            </form>
+
+                            <!-- 삭제 -->
+                            <form th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('정말 삭제하시겠습니까?\n\n⚠️ 이 회원이 작성한 모든 콘텐츠도 함께 삭제될 수 있습니다.');">
+                                <button type="submit" class="btn-action btn-danger">🗑️ 삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="6" style="text-align: center; color: #999; padding: 40px;">
+                        회원이 없습니다.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 안내 -->
+    <div class="admin-info">
+        <h3>⚠️ 주의사항</h3>
+        <ul>
+            <li>회원 삭제 시 해당 회원이 작성한 맛집, 게시글, 댓글이 함께 삭제될 수 있습니다.</li>
+            <li>관리자 권한을 부여하면 모든 콘텐츠를 수정/삭제할 수 있습니다.</li>
+            <li>자기 자신의 계정은 삭제할 수 없습니다.</li>
+        </ul>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 맛집 추천 | <a th:href="@{/admin}">관리자 대시보드</a></p>
+</footer>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

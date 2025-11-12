@@ -1,0 +1,424 @@
+/* 기본 스타일, 로그인/회원가입 스타일, 인증css
+   배경이미지, 카드 디자인 */
+   /* 🎨 1. 기본 리셋 & Body (1~14줄)
+      * (전체 선택자)
+
+      역할: 모든 HTML 요소의 기본 여백/패딩 제거
+      기능: margin: 0, padding: 0 → 브라우저 기본 스타일 초기화
+      box-sizing: 테두리/패딩을 너비에 포함시킴
+
+      body
+
+      역할: 페이지 전체 배경 및 레이아웃
+      기능:
+
+      보라색 그라데이션 배경
+      화면 전체 높이(min-height: 100vh)
+      Flexbox로 중앙 정렬 (로그인 카드를 화면 한가운데 배치) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===== 로그인/회원가입 페이지 배경이미지 ===== */
+/* 🖼️ 2. 배경 이미지 (16~21줄)
+   body.login-page, body.signup-page
+
+   역할: 로그인/회원가입 페이지 전용 배경
+   기능:
+
+   음식 이미지(foods_tour.jpg)를 배경으로 사용
+   rgba(0, 0, 0, 0.45) → 검은색 반투명 레이어로 어둡게 처리
+   center/cover → 이미지 중앙 배치 + 화면 꽉 채움
+   fixed → 스크롤해도 배경 고정 */
+body.login-page,
+body.signup-page {
+    background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),
+                url('/images/foods_tour.jpg') center/cover no-repeat fixed;
+    background-color: #333; /* 폴백 */
+}
+
+/* 인증 컨테이너 */
+/* 📦 3. 인증 컨테이너 (23~28줄)
+   .auth-container
+
+   역할: 로그인 카드를 감싸는 외부 컨테이너
+   기능:
+
+   최대 너비 420px
+   slideUp 애니메이션 (아래에서 위로 슬라이드) */
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    animation: slideUp 0.5s ease-out;
+}
+
+/* 인증 카드 */
+/* 🎴 4. 인증 카드 (30~49줄)
+   .auth-card
+
+   역할: 로그인/회원가입 폼이 들어가는 흰색 박스
+   기능:
+
+   반투명 흰색 배경 (rgba(255, 255, 255, 0.97))
+   backdrop-filter: blur(10px) → 배경 흐림 효과 (유리 질감)
+   둥근 모서리 + 그림자로 떠있는 느낌
+
+
+
+   .auth-card h2
+
+   역할: "로그인" 또는 "회원가입" 제목
+   기능: 중앙 정렬, 큰 글씨(32px), 굵은 글씨 */
+.auth-card {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 50px 40px;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.auth-card h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 35px;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* 폼 그룹 */
+/* 📝 5. 폼 그룹 (51~82줄)
+   .form-group
+
+   역할: 입력 필드 하나의 묶음 (라벨 + 입력창)
+   예시: "아이디" 라벨 + 아이디 입력창
+
+   .form-group label
+
+   역할: 입력창 위에 표시되는 라벨 ("아이디", "비밀번호" 등)
+   기능: 굵은 글씨, 회색 (#555)
+
+   .form-group input
+
+   역할: 실제 입력창
+   기능:
+
+   기본 상태: 연한 회색 배경 (#f9f9f9)
+   포커스 시: 흰색 배경 + 보라색 테두리 + 파란 빛나는 효과
+   ::placeholder → 입력 힌트 텍스트 색상 */
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+.form-group input::placeholder {
+    color: #aaa;
+}
+
+/* 폼 메시지 (중복 체크 등) */
+/* 💬 6. 폼 메시지 (84~97줄)
+   .form-message
+
+   역할: 입력창 아래 피드백 메시지 (예: "사용 가능한 아이디입니다")
+   기능: 작은 글씨(12px), 최소 높이 16px (공간 확보)
+
+   .form-message.success / .form-message.error
+
+   역할: 성공은 초록색, 에러는 빨간색으로 구분
+   예시:
+
+   ✅ "사용 가능한 아이디입니다" (초록색)
+   ❌ "이미 존재하는 아이디입니다" (빨간색) */
+.form-message {
+    font-size: 12px;
+    margin-top: 6px;
+    min-height: 16px;
+    font-weight: 500;
+}
+
+.form-message.success {
+    color: #27ae60;
+}
+
+.form-message.error {
+    color: #e74c3c;
+}
+
+/* 버튼 */
+/* 🔘 7. 버튼 (99~149줄)
+   .btn
+
+   역할: 모든 버튼의 기본 스타일
+   기능: 둥근 모서리, 부드러운 전환 효과
+
+   .btn-primary
+
+   역할: 주요 버튼 (로그인, 회원가입 버튼)
+   기능:
+
+   보라색 그라데이션 배경
+   마우스 올리면: 위로 살짝 올라감 + 그림자 커짐
+   클릭하면: 살짝 눌리는 효과
+
+
+
+   .btn-secondary
+
+   역할: 보조 버튼 (취소, 뒤로가기 등)
+   기능: 회색 배경, 테두리 있음
+
+   .btn-block
+
+   역할: 버튼 너비를 100%로 만듦 (가로 전체 차지) */
+.btn {
+    display: inline-block;
+    padding: 13px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    letter-spacing: 0.3px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1.5px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background-color: #e8e8e8;
+    border-color: #999;
+    transform: translateY(-3px);
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* 알림 메시지 */
+/* ⚠️ 8. 알림 메시지 (151~167줄)
+   .alert
+
+   역할: 페이지 상단에 표시되는 알림 박스
+   예시: "로그인에 실패했습니다", "회원가입이 완료되었습니다"
+
+   .alert-success / .alert-error
+
+   역할: 성공은 초록 박스, 실패는 빨간 박스 */
+.alert {
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* 인증 링크 */
+/* 🔗 9. 인증 링크 (169~184줄)
+   .auth-link
+
+   역할: "계정이 없으신가요? 회원가입" 같은 링크 영역
+   기능: 중앙 정렬, 작은 글씨
+
+   .auth-link a
+
+   역할: 링크 텍스트
+   기능: 보라색, 마우스 올리면 더 진한 보라색 + 밑줄 */
+.auth-link {
+    text-align: center;
+    margin-top: 25px;
+    color: #666;
+    font-size: 14px;
+}
+
+.auth-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.auth-link a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* 애니메이션 */
+/* 🎬 10. 애니메이션 (186~195줄)
+   @keyframes slideUp
+
+   역할: 로그인 카드가 나타날 때 사용하는 애니메이션
+   효과:
+
+   시작: 투명(opacity: 0) + 아래쪽(translateY: 30px)
+   끝: 불투명(opacity: 1) + 원래 위치(translateY: 0)
+   결과 → 아래에서 위로 스르륵 올라오는 효과 */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 */
+/* 📱 11. 반응형 (197~236줄)
+   @media (max-width: 768px) - 태블릿
+
+   역할: 화면 폭이 768px 이하일 때
+   변경사항:
+
+   카드 패딩 축소 (50px → 40px)
+   제목 크기 축소 (32px → 28px)
+
+
+
+   @media (max-width: 480px) - 모바일
+
+   역할: 화면 폭이 480px 이하일 때 (스마트폰)
+   변경사항:
+
+   카드 패딩 더 축소 (40px → 35px)
+   제목 크기 더 축소 (28px → 24px)
+   입력창/버튼 크기 축소 */
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 40px 30px;
+    }
+
+    .auth-card h2 {
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 15px;
+    }
+
+    .auth-card {
+        padding: 35px 20px;
+    }
+
+    .auth-card h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+
+    .form-group input {
+        padding: 11px 14px;
+        font-size: 13px;
+    }
+
+    .btn {
+        padding: 11px 24px;
+        font-size: 14px;
+    }
+}
+
+/* 💡 핵심 패턴 요약
+
+   중앙 정렬: display: flex + justify-content: center + align-items: center
+   글라스모피즘: backdrop-filter: blur(10px) + 반투명 배경
+   포커스 효과: 입력창 클릭 시 빛나는 테두리 (box-shadow)
+   호버 효과: 버튼 마우스 올리면 위로 올라감 (translateY(-3px))
+   애니메이션: 페이지 로드 시 아래에서 위로 슬라이드 */
+
+   /* 🎯 실제 사용 예시
+      html<body class="login-page"> <!-- 배경 이미지 적용 -->
+        <div class="auth-container"> <!-- 중앙 정렬 컨테이너 -->
+          <div class="auth-card"> <!-- 흰색 카드 박스 -->
+            <h2>로그인</h2> <!-- 제목 -->
+
+            <div class="form-group"> <!-- 입력 필드 묶음 -->
+              <label>아이디</label>
+              <input type="text" placeholder="아이디를 입력하세요">
+              <div class="form-message success">사용 가능합니다</div>
+            </div>
+
+            <button class="btn btn-primary btn-block">로그인</button>
+
+            <div class="auth-link">
+              계정이 없으신가요? <a href="/signup">회원가입</a>
+            </div>
+          </div>
+        </div>
+      </body> */

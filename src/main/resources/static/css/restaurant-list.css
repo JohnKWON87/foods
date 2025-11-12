@@ -1,0 +1,499 @@
+/* ========== 기본 스타일 ========== */
+/* 🎨 1. 기본 설정 (1~15줄)
+   body
+
+   역할: 페이지 배경 및 3D 설정
+   기능:
+
+   perspective: 2000px → 3D 효과를 위한 원근감
+   overflow: hidden → 스크롤 방지
+   회색 배경 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  background-color: #e8e6e7;
+  perspective: 2000px;
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ========== 카드 컨테이너 (드래그 영역) ========== */
+/* 🎴 2. 카드 래퍼 (17~25줄)
+   .card-wrapper
+
+   역할: 카드들이 배치되는 드래그 가능한 영역
+   기능:
+
+   전체 화면 크기 (100vh)
+   cursor: grab → 손 모양 커서
+   user-select: none → 텍스트 드래그 방지
+
+
+
+   .card-wrapper:active
+
+   기능: 드래그 중 cursor: grabbing (쥐는 손 모양) */
+.card-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  cursor: grab;
+  user-select: none;
+}
+
+.card-wrapper:active {
+  cursor: grabbing;
+}
+
+/* ========== 카드 기본 스타일 (test.html과 동일) ========== */
+/* 🎴 3. 카드 기본 스타일 (27~40줄)
+   .food-card
+
+   역할: 개별 맛집 카드
+   기능:
+
+   position: absolute → 자유 배치
+   너비 325px, 흰색 배경
+   둥근 모서리(30px), 그림자
+   핵심: transform: rotateX(22deg) rotate(-14deg) rotateY(17deg)
+   → 3D 회전 효과로 기울어진 느낌
+
+
+
+   .food-card:hover
+
+   기능: 마우스 올리면 그림자 더 진하게 */
+.food-card {
+  background-color: #fff;
+  position: absolute;
+  width: 325px;
+  overflow: hidden;
+  border-radius: 30px;
+  box-shadow: -30px 70px 150px -20px rgba(51, 51, 51, 0.25);
+  transform-style: preserve-3d;
+  cursor: pointer;
+  transition: transform 0.3s ease, z-index 0s, box-shadow 0.3s ease;
+  /* test.html과 동일한 3D 변형 */
+  transform: rotateX(22deg) rotate(-14deg) rotateY(17deg) translateZ(var(--z, 0px));
+}
+
+/* 호버 시 앞으로 나오기 (JavaScript에서 제어) */
+.food-card:hover {
+  box-shadow: -30px 70px 200px -20px rgba(51, 51, 51, 0.5);
+}
+
+/* ========== 카드 이미지 영역 ========== */
+/* 🖼️ 4. 카드 이미지 (42~57줄)
+   .food-card__image
+
+   역할: 카드 상단 이미지 영역
+   기능: 고정 높이 160px
+
+   .food-card__image > img
+
+   역할: 맛집 사진
+   기능:
+
+   높이 200px (영역보다 큼)
+   transform: rotate(8deg) translate(-10px, -55px) → 기울이고 위치 조정
+   object-fit: cover → 영역 채움 */
+.food-card__image {
+  position: relative;
+  height: 160px;
+  overflow: hidden;
+}
+
+.food-card__image > img {
+  max-width: 100%;
+  border-bottom-right-radius: 30px;
+  transform: rotate(8deg) translate(-10px, -55px);
+  position: absolute;
+  height: 200px;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ========== 카드 상세 정보 ========== */
+/* 📋 5. 카드 정보 (59~106줄)
+   .food-card__details
+
+   역할: 카드 하단 정보 영역
+   기능: CSS Grid로 2x2 레이아웃
+
+     | 이름      | 가격     |
+     | 설명      | 별점     |
+   .food-card__name
+
+   역할: 맛집 이름
+   기능: 왼쪽 상단, 굵은 글씨
+
+   .food-card__price
+
+   역할: 가격
+   기능: 우측 상단, 빨간색
+
+   .food-card__desc
+
+   역할: 설명
+   기능: 왼쪽 하단, 회색
+
+   .food-card__rating
+
+   역할: 별점
+   기능: 우측 하단 */
+.food-card__details {
+  display: grid;
+  grid-row-gap: 8px;
+  grid-template: 1fr 1fr / 1fr 1fr;
+  padding: 8px 30px 20px;
+}
+
+.food-card__name {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 18px;
+  font-weight: bold;
+  color: #11313c;
+}
+
+.food-card__price {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 18px;
+  font-weight: bold;
+  color: #f7736e;
+  text-align: right;
+}
+
+.food-card__desc {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 14px;
+  font-weight: 500;
+  color: #949a98;
+}
+
+.food-card__rating {
+  grid-column: 2;
+  grid-row: 2;
+  text-align: right;
+}
+
+/* ========== 별 모양 ========== */
+/* ⭐ 별 모양 (86~96줄)
+   .food-card__star
+
+   역할: 별 하나
+   기능:
+
+   clip-path → 별 모양으로 자름
+   회색 배경
+
+
+
+   .food-card__star--gold
+
+   역할: 채워진 별
+   기능: 노란색 */
+.food-card__star {
+  width: 16px;
+  height: 16px;
+  background-color: #dadada;
+  display: inline-block;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+.food-card__star:not(:last-child) {
+  margin-right: 6px;
+}
+
+.food-card__star--gold {
+  background-color: #e6c356;
+}
+
+/* ========== 빈 메시지 ========== */
+/* 📭 6. 빈 메시지 (98~113줄)
+   .empty-message
+
+   역할: 등록된 맛집이 없을 때 표시
+   기능: 중앙 정렬, 큰 글씨 */
+.empty-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 24px;
+  color: #666;
+  z-index: 1000;
+}
+
+.empty-message h2 {
+  margin-bottom: 15px;
+}
+
+.empty-message p {
+  margin-bottom: 30px;
+  color: #999;
+}
+
+/* ========== 🎯 광고 배너 스타일 맛집 추가 버튼 ========== */
+/* ✨ 7. 광고 배너 (115~195줄)
+   a.add-restaurant-banner
+
+   역할: "맛집 추가하기" 떠다니는 버튼
+   기능:
+
+   화면 하단 중앙 고정 (position: fixed, bottom: 30px)
+   보라색 그라데이션 배경
+   큰 그림자
+   transform: translateX(-50%) → 완전 중앙 정렬
+
+
+
+   ::before, ::after
+
+   역할: 버튼 앞뒤 아이콘
+   구조: ✨ 맛집 추가하기 +
+
+   :hover
+
+   효과: 위로 떠오르며 확대 (translateY(-10px) scale(1.1))
+
+   @keyframes glow
+
+   역할: 빛나는 효과
+   효과: 그림자 크기가 커졌다 작아짐 (맥동)
+
+   @keyframes rotate
+
+   역할: 별(✨) 회전 */
+a.add-restaurant-banner {
+  /* 위치 고정 */
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  z-index: 10000;
+
+  /* 배너 디자인 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 22px 50px;
+
+  /* 배경 그라데이션 */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 60px;
+
+  /* 그림자 */
+  box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+
+  /* 텍스트 */
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+
+  /* 중앙 정렬 */
+  transform: translateX(-50%);
+
+  /* 애니메이션 */
+  transition: all 0.4s ease;
+  animation: glow 2s ease-in-out infinite;
+
+  /* 커서 */
+  cursor: pointer;
+}
+
+/* 별 아이콘 */
+a.add-restaurant-banner::before {
+  content: '✨';
+  font-size: 26px;
+  animation: rotate 4s linear infinite;
+}
+
+/* 플러스 아이콘 */
+a.add-restaurant-banner::after {
+  content: '+';
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  margin-left: 5px;
+}
+
+/* 호버 효과 */
+a.add-restaurant-banner:hover {
+  transform: translateX(-50%) translateY(-10px) scale(1.1);
+  box-shadow: 0 25px 70px rgba(102, 126, 234, 0.8);
+  animation: none;
+}
+
+/* 빛나는 효과 */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+  }
+  50% {
+    box-shadow: 0 15px 70px rgba(102, 126, 234, 0.9),
+                0 0 30px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* 별 회전 */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ========== 드래그 인디케이터 ========== */
+/* 🖱️ 8. 드래그 인디케이터 (197~219줄)
+   .drag-indicator
+
+   역할: "드래그해서 카드를 이동하세요" 안내
+   기능:
+
+   하단 중앙, 반투명 흰색 배경
+   글라스모피즘 (backdrop-filter: blur(10px))
+
+
+
+   @keyframes indicatorFade
+
+   효과: 깜빡임 (투명도 0.5 ↔ 1.0) */
+.drag-indicator {
+  position: fixed;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  font-weight: 600;
+
+  background: rgba(255, 255, 255, 0.9);
+  padding: 12px 28px;
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  pointer-events: none;
+  z-index: 9999;
+
+  animation: indicatorFade 2.5s ease-in-out infinite;
+}
+
+@keyframes indicatorFade {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ========== 반응형 디자인 ========== */
+/* 📱 9. 반응형 (221~267줄)
+   태블릿 (768px 이하)
+
+   카드 너비 축소 (325px → 280px)
+   버튼 크기 축소
+
+   모바일 (480px 이하)
+
+   카드 너비 더 축소 (280px → 250px)
+   글씨 크기 축소
+   버튼/인디케이터 크기 축소 */
+@media (max-width: 768px) {
+  .food-card {
+    width: 280px;
+  }
+
+  a.add-restaurant-banner {
+    padding: 18px 40px;
+    font-size: 17px;
+  }
+
+  a.add-restaurant-banner::before {
+    font-size: 22px;
+  }
+
+  a.add-restaurant-banner::after {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .food-card {
+    width: 250px;
+  }
+
+  .food-card__name,
+  .food-card__price {
+    font-size: 16px;
+  }
+
+  .food-card__desc {
+    font-size: 12px;
+  }
+
+  a.add-restaurant-banner {
+    padding: 15px 35px;
+    font-size: 15px;
+  }
+
+  a.add-restaurant-banner::before {
+    font-size: 20px;
+  }
+
+  a.add-restaurant-banner::after {
+    font-size: 24px;
+  }
+
+  .drag-indicator {
+    font-size: 12px;
+    padding: 10px 20px;
+    bottom: 110px;
+  }
+}
+
+/* 💡 핵심 기능 요약
+   restaurant-detail.css
+
+   클래식한 디자인 (Times New Roman)
+   대표 이미지 + 정보 + 추가 이미지 + 지도
+   이미지 클릭 시 전체 화면 모달
+   북마크 버튼
+
+   restaurant-form.css
+
+   폼 기반 레이아웃
+   대표 이미지 / 메뉴 이미지 분리
+   드래그 앤 드롭 파일 업로드
+   이미지 미리보기 + 삭제 기능
+
+   restaurant-list.css
+
+   3D 카드 효과 (핵심!)
+   드래그로 카드 이동
+   떠다니는 추가 버튼
+   별점 시스템
+
+
+   🎯 전체 CSS 파일 구조 정리
+   파일                용도                  특징
+   auth.css        로그인/회원가입      글라스모피즘, 중앙 정렬
+   index.css         홈페이지         환영 카드,버튼 애니메이션
+   navbar.css       네비게이션고정        메뉴, 햄버거 메뉴
+   board-list.css    게시판목록          테이블→카드 반응형
+   board-detail.css  게시글상세            댓글 시스템
+   board-form.css    게시글작성            폼 레이아웃
+   bookmark-list.css  북마크 목록         카드 격자, 토스트
+   restaurant-detail.css 맛집 상세       클래식 디자인, 지도
+   restaurant-form.css 맛집 등록        파일 업로드, 미리보기
+   restaurant-list.css 맛집 목록         3D 카드 드래그
+   admin.css          관리자 페이지     통계, 테이블, 액션 버튼 */

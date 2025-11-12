@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ✅ 이 2줄 추가! -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <title th:text="${board.title} + ' - 맛집 추천'">게시글 상세 - 맛집 추천</title>
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/board-detail.css}">
+</head>
+<body>
+<!-- 네비게이션 바 -->
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container">
+    <!-- 게시글 헤더 -->
+    <div class="board-header">
+        <h1 th:text="${board.title}">게시글 제목</h1>
+        <div class="board-meta">
+            <span class="author">✍️ <span th:text="${board.author.username}">작성자</span></span>
+            <span class="date">📅 <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span></span>
+            <span class="view-count">👁️ 조회 <span th:text="${board.viewCount}">0</span></span>
+        </div>
+        <div th:if="${board.updatedAt != null}" class="board-updated">
+            수정됨: <span th:text="${#temporals.format(board.updatedAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 게시글 내용 -->
+    <div class="board-content">
+        <div th:utext="${board.content}"
+             class="content-text">
+            게시글 내용이 여기에 표시됩니다.
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 게시글 액션 (수정/삭제) -->
+    <div class="board-actions">
+        <a th:href="@{/boards}" class="btn btn-secondary">목록으로</a>
+
+        <!-- 로그인한 사용자만 -->
+        <div sec:authorize="isAuthenticated()">
+            <!-- 작성자 본인 또는 관리자만 수정/삭제 -->
+            <th:block th:if="${board.author != null &&
+                      (#authentication.name == board.author.username ||
+                       #authorization.expression('hasRole(''ADMIN'')'))}">
+                <a th:href="@{/boards/{id}/edit(id=${board.id})}" class="btn btn-edit">수정</a>
+                <form th:action="@{/boards/{id}/delete(id=${board.id})}" method="post"
+                      style="display:inline;"
+                      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-delete">삭제</button>
+                </form>
+            </th:block>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- 댓글 섹션 -->
+    <div class="comments-section">
+        <h2>댓글 (<span th:text="${commentCount}">0</span>)</h2>
+
+        <!-- 댓글 작성 폼 (로그인한 사용자만) -->
+        <div sec:authorize="isAuthenticated()" class="comment-form-wrapper">
+            <form th:action="@{/comments}" method="post" class="comment-form">
+                <input type="hidden" name="boardId" th:value="${board.id}">
+                <textarea name="content" class="comment-textarea"
+                          placeholder="댓글을 입력하세요 (500자 이내)"
+                          maxlength="500" required></textarea>
+                <div class="comment-form-actions">
+                    <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    <span class="char-count"><span id="charCount">0</span>/500</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- 비로그인 상태 -->
+        <div sec:authorize="!isAuthenticated()" class="no-auth-notice">
+            <p><a th:href="@{/login}">로그인</a>하면 댓글을 작성할 수 있습니다.</p>
+        </div>
+
+        <!-- 댓글 목록 -->
+        <div class="comments-list">
+            <div th:if="${comments.isEmpty()}" class="no-comments">
+                <p>댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
+            </div>
+
+            <div th:each="comment : ${comments}" class="comment-item">
+                <div class="comment-header">
+                    <span class="comment-author">
+                        <strong th:text="${comment.author.username}">작성자</strong>
+                    </span>
+                    <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">
+                        2024-01-01 12:00
+                    </span>
+                    <div th:if="${comment.updatedAt != null}" class="comment-updated">
+                        (수정됨)
+                    </div>
+                </div>
+
+                <div class="comment-content" th:text="${comment.content}">
+                    댓글 내용
+                </div>
+
+                <!-- 댓글 액션 (수정/삭제) -->
+                <div class="comment-actions"
+                     sec:authorize="isAuthenticated()"
+                     th:if="${comment.author.username == #authentication.name || #authorization.expression('hasRole(''ADMIN'')')}">
+                    <button type="button" class="btn-edit-comment"
+                            th:onclick="'editComment(' + ${comment.id} + ', this)'">수정</button>
+                    <form th:action="@{/comments/{id}/delete(id=${comment.id})}" method="post"
+                          style="display:inline;"
+                          onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+                        <button type="submit" class="btn-delete-comment">삭제</button>
+                    </form>
+                </div>
+
+                <!-- 댓글 수정 폼 (숨김) -->
+                <div class="comment-edit-form" th:id="'editForm-' + ${comment.id}" style="display:none;">
+                    <form th:action="@{/comments/{id}/edit(id=${comment.id})}" method="post">
+                        <textarea name="content" class="comment-edit-textarea"
+                                  th:text="${comment.content}" maxlength="500" required></textarea>
+                        <div class="edit-form-actions">
+                            <button type="submit" class="btn btn-sm btn-primary">저장</button>
+                            <button type="button" class="btn btn-sm btn-secondary"
+                                    th:onclick="'cancelEditComment(' + ${comment.id} + ')'">취소</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 맛집 추천 | <a th:href="@{/boards}">게시판</a></p>
+</footer>
+
+<script th:src="@{/js/board-detail.js}"></script>
+</body>
+</html>
