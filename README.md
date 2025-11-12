@@ -150,7 +150,7 @@ List<Restaurant> findAllWithReviews();
 - [ ] 좋아요/북마크 기능
 - [ ] AWS 배포
 - [ ] 카카오맵 API 연동
-- [ ] 소셜 로그인 (구글, 카카오)
+- [ ] 소셜 로그인 (구글, 카카오) SSO 기능 및 OAuth 기능 예정
 
 ## 📧 문의
 
