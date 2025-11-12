@@ -20,7 +20,7 @@
 - Thymeleaf
 
 ### Database
-- MySQL 8.0
+- MySQL WorkBench
 
 ### Frontend
 - HTML5 / CSS3
@@ -30,7 +30,6 @@
 ### Tools
 - IntelliJ IDEA
 - Git / GitHub
-- Postman
 
 ## 🎯 주요 기능
 
@@ -89,21 +88,21 @@ src/
 
 ### 1. 저장소 클론
 ```bash
-git clone https://github.com/본인아이디/restaurant-community.git
-cd restaurant-community
+git clone https://github.com/johnkwon87/foods.git
+cd foods
 ```
 
 ### 2. 데이터베이스 설정
 MySQL에 데이터베이스를 생성합니다.
 ```sql
-CREATE DATABASE restaurant_db;
+CREATE DATABASE foods_db;
 ```
 
 ### 3. application.properties 설정
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/restaurant_db
 spring.datasource.username=root
-spring.datasource.password=본인비밀번호
+spring.datasource.password=1234
 ```
 
 ### 4. 프로젝트 실행
