@@ -158,10 +158,11 @@ List<Restaurant> findAllWithReviews();
 <a href="https://github.com/johnkwon87/foods" class="btn btn-primary">GitHub 보기</a>
 ```
 
-**연락처 부분:010-3524-3007**
+**연락처 부분: email**
 ```
-📧 johnkwon33@gmail.com
-💻 github.com/johnkwon87
+📧 Email : johnkwon33@gmail.com
+💻 GitHub : https://github.com/johnkwon87/foods
+
 
 ---
 
